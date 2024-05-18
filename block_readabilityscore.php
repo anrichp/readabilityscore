@@ -68,7 +68,7 @@ class block_readabilityscore extends block_base {
         $pagecontent = 'In the crepuscular languor of a forgotten epoch, amidst monolithic edifices sculpted from antediluvian obsidian, resided Erasmus, a man of peregrine proclivities and an intellect that rivaled the most venerated polymaths. His sole companion was Euphemia, a cerulean automaton fashioned from the filigreed craftsmanship of a bygone era. Erasmus, burdened by an insatiable epistemological yearning, toiled incessantly within his sanctum, a labyrinthine library overflowing with crumbling parchments inscribed in arcane tongues.';
 
         //Extract text from page content
-        $text = strip_tags($pagecontent);
+        $text = $pagecontent;
 
         // Send text to readability score function
         $score = readability_score($text);
@@ -77,7 +77,6 @@ class block_readabilityscore extends block_base {
         $this->content = new stdClass();
         $this->content->text = 'Readability Score: ' . $score;
         $this->content->footer = '';
-
 
     }
 

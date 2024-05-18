@@ -25,22 +25,23 @@ function readability_score($text) {
     // Calculate the average number of syllables per word
     $total_syllables = 0;
     foreach ($words as $word) {
-        $total_syllables += count(vowels($word));
+        $total_syllables += count_vowels($word);
     }
     $avg_syllables_per_word = $total_syllables / count($words);
+    debug_to_console($avg_syllables_per_word);
 
     // Calculate the Flesch-Kincaid Grade Level
-    $grade_level = 206.835 - 1.015 * $avg_sentence_length - 84.6 * $avg_syllables_per_word;
+    $grade_level = 0.39 * $avg_sentence_length + 11.8 * $avg_syllables_per_word - 15.59;
 
     // Round the grade level to one decimal place
     $grade_level = round($grade_level, 1);
 
-    // Return the readability score as a string
-    return 'Grade ' . $grade_level;
+    // Return the readability score as a float
+    return $grade_level;
 }
 
 // Helper function to count the number of vowels in a word
-function vowels($word) {
+function count_vowels($word) {
     $vowels = array('a', 'e', 'i', 'o', 'u');
     $count = 0;
     foreach (str_split($word) as $char) {
@@ -48,5 +49,13 @@ function vowels($word) {
             $count++;
         }
     }
-    return array($count);
+    return $count;
+}
+
+function debug_to_console($data) {
+    $output = $data;
+    if (is_array($output))
+        $output = implode(',', $output);
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
