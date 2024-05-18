@@ -15,6 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 function readability_score($text) {
-    // Implement readability score calculation logic here
-    // Return the score as a string (e.g., 'Grade 8.5')
+    // Split the text into sentences and words
+    $sentences = preg_split('/(?<=[.!?])\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+    $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+
+    // Calculate the average sentence length
+    $avg_sentence_length = count($words) / count($sentences);
+
+    // Calculate the average number of syllables per word
+    $total_syllables = 0;
+    foreach ($words as $word) {
+        $total_syllables += count(vowels($word));
+    }
+    $avg_syllables_per_word = $total_syllables / count($words);
+
+    // Calculate the Flesch-Kincaid Grade Level
+    $grade_level = 206.835 - 1.015 * $avg_sentence_length - 84.6 * $avg_syllables_per_word;
+
+    // Round the grade level to one decimal place
+    $grade_level = round($grade_level, 1);
+
+    // Return the readability score as a string
+    return 'Grade ' . $grade_level;
+}
+
+// Helper function to count the number of vowels in a word
+function vowels($word) {
+    $vowels = array('a', 'e', 'i', 'o', 'u');
+    $count = 0;
+    foreach (str_split($word) as $char) {
+        if (in_array(strtolower($char), $vowels)) {
+            $count++;
+        }
+    }
+    return array($count);
 }
