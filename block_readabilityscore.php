@@ -21,6 +21,8 @@
  * @copyright   2024 Anrich Potgieter <anrichp@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once(dirname(__FILE__) . '/lib.php');
+
 class block_readabilityscore extends block_base {
 
     /**
@@ -63,7 +65,7 @@ class block_readabilityscore extends block_base {
         global $PAGE;
 
         // Get current page content
-        $pagecontent = $PAGE->get_renderer('core')->render_page($PAGE);
+        $pagecontent = 'this is some page content';
 
         //Extract text from page content
         $text = strip_tags($pagecontent);
