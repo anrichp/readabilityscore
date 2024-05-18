@@ -38,28 +38,45 @@ class block_readabilityscore extends block_base {
      */
     public function get_content() {
 
-        if ($this->content !== null) {
-            return $this->content;
-        }
+        // if ($this->content !== null) {
+        //     return $this->content;
+        // }
 
-        if (empty($this->instance)) {
-            $this->content = '';
-            return $this->content;
-        }
+        // if (empty($this->instance)) {
+        //     $this->content = '';
+        //     return $this->content;
+        // }
 
+        // $this->content = new stdClass();
+        // $this->content->items = array();
+        // $this->content->icons = array();
+        // $this->content->footer = '';
+
+        // if (!empty($this->config->text)) {
+        //     $this->content->text = $this->config->text;
+        // } else {
+        //     $text = 'Please define the content text in /blocks/readabilityscore/block_readabilityscore.php.';
+        //     $this->content->text = $text;
+        // }
+
+        // return $this->content;
+        global $PAGE;
+
+        // Get current page content
+        $pagecontent = $PAGE->get_renderer('core')->render_page($PAGE);
+
+        //Extract text from page content
+        $text = strip_tags($pagecontent);
+
+        // Send text to readability score function
+        $score = readability_score($text);
+
+        //Display readability score
         $this->content = new stdClass();
-        $this->content->items = array();
-        $this->content->icons = array();
+        $this->content->text = 'Readability Score: ' . $score;
         $this->content->footer = '';
 
-        if (!empty($this->config->text)) {
-            $this->content->text = $this->config->text;
-        } else {
-            $text = 'Please define the content text in /blocks/readabilityscore/block_readabilityscore.php.';
-            $this->content->text = $text;
-        }
 
-        return $this->content;
     }
 
     /**
