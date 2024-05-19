@@ -54,6 +54,12 @@ class block_readabilityscore extends block_base {
      */
     public function get_content() {
 
+        // Determine whether user is logged in
+        if (!isloggedin() or isguestuser()) {
+            // Only real users can access myprofile block.
+            return;
+        }
+
         // Instantiate global variables
         global $PAGE, $OUTPUT;
 
