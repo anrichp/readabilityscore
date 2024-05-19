@@ -80,7 +80,11 @@ class block_readabilityscore extends block_base {
      * @return string[] Array of pages and permissions.
      */
     public function applicable_formats() {
-        return array(
-        );
+        return [
+            'course-view' => true,
+            'site' => true,
+            'mod' => false,
+            'my' => false,
+        ];
     }
 }
