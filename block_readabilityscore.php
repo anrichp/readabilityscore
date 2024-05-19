@@ -34,6 +34,20 @@ class block_readabilityscore extends block_base {
     }
 
     /**
+     * Sets the applicable formats for the block.
+     *
+     * @return string[] Array of pages and permissions.
+     */
+    public function applicable_formats() {
+        return [
+            'course-view' => true,
+            'site' => true,
+            'mod' => false,
+            'my' => false,
+        ];
+    }
+
+    /**
      * Returns the block contents.
      *
      * @return stdClass The block contents.
@@ -74,17 +88,4 @@ class block_readabilityscore extends block_base {
         }
     }
 
-    /**
-     * Sets the applicable formats for the block.
-     *
-     * @return string[] Array of pages and permissions.
-     */
-    public function applicable_formats() {
-        return [
-            'course-view' => true,
-            'site' => true,
-            'mod' => false,
-            'my' => false,
-        ];
-    }
 }
