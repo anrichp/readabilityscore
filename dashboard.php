@@ -20,6 +20,7 @@ require_once($CFG->dirroot . '/blocks/readabilityscore/lib.php');
 $PAGE->set_url('/blocks/readabilityscore/dashboard.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('pluginname', 'block_readabilityscore'));
+$PAGE->set_heading(get_string('pluginname', 'block_readabilityscore'));
 
 echo $OUTPUT->header();
 
