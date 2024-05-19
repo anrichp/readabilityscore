@@ -26,4 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Readability Score';
-$string['readabilityscore:addinstance'] = 'Add an accessibility review block';
+$string['readabilityscore:addinstance'] = 'Add a readability score block';
