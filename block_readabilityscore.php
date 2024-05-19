@@ -22,6 +22,7 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->dirroot.'/blocks/readabilityscore/db/access.php');
 
 class block_readabilityscore extends block_base {
 
