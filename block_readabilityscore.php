@@ -43,10 +43,10 @@ class block_readabilityscore extends block_base {
         global $PAGE;
 
         // Get current page content
-        $text = 'In the crepuscular languor of a forgotten epoch, amidst monolithic edifices sculpted from antediluvian obsidian, resided Erasmus, a man of peregrine proclivities and an intellect that rivaled the most venerated polymaths. His sole companion was Euphemia, a cerulean automaton fashioned from the filigreed craftsmanship of a bygone era. Erasmus, burdened by an insatiable epistemological yearning, toiled incessantly within his sanctum, a labyrinthine library overflowing with crumbling parchments inscribed in arcane tongues.';
+        $text = $PAGE->get_renderer('core')->main_content();
 
         // Send text to readability score function
-        $score = readability_score($text);
+        $score = readability_score($stripped_text);
 
         //Display readability score
         $this->content = new stdClass();
@@ -55,7 +55,7 @@ class block_readabilityscore extends block_base {
         // Add button to open dashboard page
         $button = new stdClass();
         $button->url = new moodle_url('/blocks/readabilityscore/dashboard.php');
-        $button->text = 'View Readability Scores Dashboard';
+        $button->text = 'Dashboard';
         $button->class = 'btn btn-primary';
         $this->content->buttons[] = $button;
         $output = '<div class="readability-score-wrapper">'; // Create a wrapper div
