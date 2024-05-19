@@ -26,3 +26,22 @@ function debug_to_console($data) {
 
     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
+
+function get_readability_score_pages() {
+    global $DB;
+
+    $pages = array();
+
+    // Retrieve list of pages from database
+    $results = $DB->get_records('readabilityscore_pages');
+
+    foreach ($results as $result) {
+        $page = new stdClass();
+        $page->title = $result->title;
+        $page->score = $result->score;
+        $page->text = $result->text;
+        $pages[] = $page;
+    }
+
+    return $pages;
+}
