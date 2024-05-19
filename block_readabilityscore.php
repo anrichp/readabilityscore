@@ -58,9 +58,11 @@ class block_readabilityscore extends block_base {
         $button->text = 'View Readability Scores Dashboard';
         $button->class = 'btn btn-primary';
         $this->content->buttons[] = $button;
-        echo '<pre>'; // Open a preformatted code block for better output
-        print_r($button); // Print the contents of the $button object
-        echo '</pre>';
+        $output = '<div class="readability-score-wrapper">'; // Create a wrapper div
+        $output .= 'Readability Score: ' . $score;
+        $output .= '<a href="' . $button->url . '" class="' . $button->class . '">' . $button->text . '</a>';
+        $output .= '</div>';
+        $this->content->text = $output;
 
         // Set footer
         $this->content->footer = '';
