@@ -40,6 +40,7 @@ class block_readabilityscore extends block_base {
      */
     public function get_content() {
 
+        // Instantiate global variables
         global $PAGE, $OUTPUT;
 
         // Get current page content
