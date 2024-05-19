@@ -51,7 +51,6 @@ class block_readabilityscore extends block_base {
         //Display readability score
         $this->content = new stdClass();
         $this->content->text = 'Readability Score: ' . $score;
-        $this->content->footer = '';
 
         // Add button to open dashboard page
         $button = new stdClass();
@@ -59,6 +58,12 @@ class block_readabilityscore extends block_base {
         $button->text = 'View Readability Scores Dashboard';
         $button->class = 'btn btn-primary';
         $this->content->buttons[] = $button;
+        echo '<pre>'; // Open a preformatted code block for better output
+        print_r($button); // Print the contents of the $button object
+        echo '</pre>';
+
+        // Set footer
+        $this->content->footer = '';
 
 
     }
