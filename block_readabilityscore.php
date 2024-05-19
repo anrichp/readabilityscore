@@ -56,7 +56,6 @@ class block_readabilityscore extends block_base {
         $button = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($button));
 
-
     }
 
     /**
