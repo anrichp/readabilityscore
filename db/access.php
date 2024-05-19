@@ -25,14 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'block/readabilityscore:addinstance' => array(
+$capabilities = [
+    'block/readabilityscore:addinstance' => [
         'riskbitmask' => RISK_NONE,
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-    ),
-);
+        ],
+    ],
+];
