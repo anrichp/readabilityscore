@@ -53,6 +53,13 @@ class block_readabilityscore extends block_base {
         $this->content->text = 'Readability Score: ' . $score;
         $this->content->footer = '';
 
+        // Add button to open dashboard page
+        $button = new stdClass();
+        $button->url = new moodle_url('/blocks/readabilityscore/dashboard.php');
+        $button->text = 'View Readability Scores Dashboard';
+        $button->class = 'btn btn-primary';
+        $this->content->buttons[] = $button;
+
 
     }
 
