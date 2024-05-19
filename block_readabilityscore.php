@@ -40,7 +40,7 @@ class block_readabilityscore extends block_base {
      */
     public function get_content() {
 
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         // Get current page content
         $text = $PAGE->get_renderer('core')->main_content();
@@ -53,17 +53,8 @@ class block_readabilityscore extends block_base {
         $this->content->text = 'Readability Score: ' . $score;
 
         // Add button to open dashboard page
-        $button = new stdClass();
-        $button->url = new moodle_url('/blocks/readabilityscore/dashboard.php');
-        $button->text = 'Dashboard';
-        $button->class = 'btn btn-primary';
-        $this->content->buttons[] = $button;
-        $output = '<div class="readability-score-wrapper">'; // Create a wrapper div
-        $output .= 'Readability Score: ' . $score;
-        $output .= '<br>';
-        $output .= '<a href="' . $button->url . '" class="' . $button->class . '">' . $button->text . '</a>';
-        $output .= '</div>';
-        $this->content->text = $output;
+        $button = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Button text');
+        $this->content->text .= html_writer::tag('div', $OUTPUT->render($button));
 
         // Set footer
         $this->content->footer = '';
