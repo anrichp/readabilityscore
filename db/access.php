@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * readabilityscore capabilities definition
+ *
+ * This is file is required to store the block permissions in the db
+ * https://moodledev.io/docs/4.4/apis/subsystems/access
+ *
+ * Once this file is created, version number must be increased to update
  *
  * @package    block_readabilityscore
  * @copyright  2024 Anrich Potgieter
