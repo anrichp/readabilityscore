@@ -60,6 +60,7 @@ class block_readabilityscore extends block_base {
         $this->content->buttons[] = $button;
         $output = '<div class="readability-score-wrapper">'; // Create a wrapper div
         $output .= 'Readability Score: ' . $score;
+        $output .= '<br>';
         $output .= '<a href="' . $button->url . '" class="' . $button->class . '">' . $button->text . '</a>';
         $output .= '</div>';
         $this->content->text = $output;
