@@ -83,7 +83,6 @@ class block_readabilityscore extends block_base
             new moodle_url('#'), // Replace with the correct URL if needed
             'Scan', // Button text
             'post', // Method
-            single_button::BUTTON_PRIMARY, // Button style
             ['id' => 'scan-button', 'class' => 'block_readabilityscore_scanbutton'] // Additional attributes
         );
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($dashboardButton));
