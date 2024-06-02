@@ -96,10 +96,8 @@ class block_readabilityscore extends block_base
 
         // Render the dashboard button
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($dashboardButton));
-        // Create a line break between the buttons
-        $this->content->text .= '<br />';
         // Render the button and append it to the content
-        $this->content->text .= html_writer::tag('div', $OUTPUT->render($scanButton), ['class' => 'block_readabilityscore_button']);
+        $this->content->text .= html_writer::tag('div', $OUTPUT->render($scanButton), ['class' => 'block_readabilityscore_button, pt-1']);
     }
 
     /**
