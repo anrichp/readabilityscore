@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('mouseup', function() {
         var selectedText = window.getSelection().toString();
         if (selectedText) {
+            // Output the selected text to the browser console for debugging
+            console.log('Selected Text:', selectedText);
+
             // Send selected text to the server for analysis
             fetch(M.cfg.wwwroot + '/blocks/readabilityscore/scan.php', {
                 method: 'POST',
