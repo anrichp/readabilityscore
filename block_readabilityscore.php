@@ -91,7 +91,7 @@ class block_readabilityscore extends block_base
             'Scan',
             'Post',
             single_button::BUTTON_PRIMARY,
-            ['class' => 'block_readabilityscore_scanbutton']
+            array('class' => 'block_readabilityscore_scanbutton')
         );
 
         // Render the dashboard button
