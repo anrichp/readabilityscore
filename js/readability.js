@@ -17,15 +17,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({ text: selectedText })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text(); // Get response as text
+            })
             .then(data => {
-                // Update the readability score on the page
-                document.getElementById('readability-score').innerText = data.score;
+                console.log('Server Response:', data); // Log the response received from the server
+                // Update the readability score on the page (assuming data is the score)
+                document.getElementById('readability-score').innerText = data;
             })
             .catch(error => console.error('Error:', error));
         }

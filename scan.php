@@ -11,13 +11,14 @@ $text = $input['text'] ?? '';
 
 if ($text) {
     // Output the received text to the console for debugging
-    echo "Received Text: " . $text;
+    error_log("Received Text: " . $text);
 
     // Perform readability score calculation here
     // Example: $score = readability_score($text);
 
     // For debugging, you can also output the calculated score
-    // echo json_encode(['score' => $score]);
+    // Return the score as JSON
+    echo json_encode(['score' => $score]);
 } else {
     echo json_encode(['error' => 'No text provided']);
 }

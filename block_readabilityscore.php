@@ -67,12 +67,6 @@ class block_readabilityscore extends block_base
         // Instantiate global variables
         global $PAGE, $OUTPUT;
 
-        // Get current page content
-        // $text = $PAGE->get_renderer('core')->main_content();
-
-        // Send text to readability score function
-        // $score = readability_score($stripped_text);
-
         //Display readability score
         $this->content = new stdClass();
         $this->content->text = 'Readability Score: ';
