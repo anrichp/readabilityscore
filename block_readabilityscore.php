@@ -91,13 +91,17 @@ class block_readabilityscore extends block_base
             'Scan',
             'Post',
             single_button::BUTTON_PRIMARY,
-            array('class' => 'block_readabilityscore_scanbutton')
+            array('id' => 'scan-button', 'class' => 'block_readabilityscore_scanbutton')
         );
 
         // Render the dashboard button
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($dashboardButton));
         // Render the button and append it to the content
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($scanButton), ['class' => 'block_readabilityscore_button, pt-1']);
+
+        // Include the JavaScript file
+        $jsUrl = new moodle_url('/blocks/readabilityscore/js/readability.js');
+        $this->page->requires->js($jsUrl);
     }
 
     /**
