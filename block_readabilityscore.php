@@ -87,6 +87,12 @@ class block_readabilityscore extends block_base
         // Render the scan button
         $this->content->text .= $scanButton;
 
+        // Add a container for displaying selected text
+        $selectedTextContainer = html_writer::start_tag('div', array('id' => 'selected-text-container'));
+        $selectedTextContainer .= 'Selected Text: ';
+        $selectedTextContainer .= html_writer::end_tag('div');
+        $this->content->text .= $selectedTextContainer;
+
         // Include the JavaScript file
         $jsUrl = new moodle_url('/blocks/readabilityscore/js/readability.js');
         $this->page->requires->js($jsUrl);

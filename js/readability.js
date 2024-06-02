@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectedText !== '') {
                 // Output selected text to the browser console
                 console.log('Selected text:', selectedText);
+
+                // Update the selected text container in the block
+                var selectedTextContainer = document.getElementById('selected-text-container');
+                if (selectedTextContainer) {
+                    selectedTextContainer.textContent += selectedText;
+                }
             }
         });
     });
