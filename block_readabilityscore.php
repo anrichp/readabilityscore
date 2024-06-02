@@ -79,10 +79,7 @@ class block_readabilityscore extends block_base
 
         // Add button to open dashboard page
         $dashboardButton = new single_button(
-            new moodle_url('/blocks/readabilityscore/dashboard.php'), 
-            'Dashboard',
-            single_button::BUTTON_PRIMARY,
-        );
+            new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
         $scanButton = new single_button(
             new moodle_url('#'), // Replace with the correct URL if needed
             'Scan', // Button text
