@@ -78,17 +78,17 @@ class block_readabilityscore extends block_base
         $this->content->text = 'Readability Score: ';
 
         // Add button to open dashboard page
-        $button = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
-        $button = new single_button(
+        $dashboardButton = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
+        $scanButton = new single_button(
             new moodle_url('#'), // Replace with the correct URL if needed
             'Scan', // Button text
             'post', // Method
             single_button::BUTTON_PRIMARY, // Button style
             ['id' => 'scan-button', 'class' => 'block_readabilityscore_scanbutton'] // Additional attributes
         );
-        $this->content->text .= html_writer::tag('div', $OUTPUT->render($button));
+        $this->content->text .= html_writer::tag('div', $OUTPUT->render($dashboardButton));
         // Render the button and append it to the content
-        $this->content->text .= html_writer::tag('div', $OUTPUT->render($button), ['class' => 'block_readabilityscore_button']);
+        $this->content->text .= html_writer::tag('div', $OUTPUT->render($scanButton), ['class' => 'block_readabilityscore_button']);
     }
 
     /**
