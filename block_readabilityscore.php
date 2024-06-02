@@ -86,7 +86,7 @@ class block_readabilityscore extends block_base
         );
 
         // Add scan button to trigger javascript
-        $scanButton = html_writer::tag('button', 'Scan', array('id' => 'scan-button', 'class' => 'btn btn-primary pb-1'));
+        $scanButton = html_writer::tag('button', 'Scan', array('id' => 'scan-button', 'class' => 'btn btn-primary'));
         
         // Render the dashboard button
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($dashboardButton));
