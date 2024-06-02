@@ -23,12 +23,14 @@
  */
 require_once(dirname(__FILE__) . '/lib.php');
 
-class block_readabilityscore extends block_base {
+class block_readabilityscore extends block_base
+{
 
     /**
      * Initializes class member variables.
      */
-    public function init() {
+    public function init()
+    {
         // Needed by Moodle to differentiate between blocks.
         $this->title = get_string('pluginname', 'block_readabilityscore');
     }
@@ -38,7 +40,8 @@ class block_readabilityscore extends block_base {
      *
      * @return string[] Array of pages and permissions.
      */
-    public function applicable_formats() {
+    public function applicable_formats()
+    {
         return [
             'course-view' => true,
             'site' => true,
@@ -52,7 +55,8 @@ class block_readabilityscore extends block_base {
      *
      * @return stdClass The block contents.
      */
-    public function get_content() {
+    public function get_content()
+    {
 
         // Determine whether user is logged in
         if (!isloggedin() or isguestuser()) {
@@ -75,8 +79,10 @@ class block_readabilityscore extends block_base {
 
         // Add button to open dashboard page
         $button = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
+        $button = new single_button(new moodle_url('#'), 'Scan', 'post', [
+            'id' => 'scan-button'
+        ]);
         $this->content->text .= html_writer::tag('div', $OUTPUT->render($button));
-
     }
 
     /**
@@ -84,7 +90,8 @@ class block_readabilityscore extends block_base {
      *
      * The function is called immediately after init().
      */
-    public function specialization() {
+    public function specialization()
+    {
 
         // Load user defined title and make sure it's never empty.
         if (empty($this->config->title)) {
@@ -93,5 +100,4 @@ class block_readabilityscore extends block_base {
             $this->title = $this->config->title;
         }
     }
-
 }
