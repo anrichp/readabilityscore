@@ -68,14 +68,14 @@ class block_readabilityscore extends block_base
         global $PAGE, $OUTPUT;
 
         // Get current page content
-        $text = $PAGE->get_renderer('core')->main_content();
+        // $text = $PAGE->get_renderer('core')->main_content();
 
         // Send text to readability score function
-        $score = readability_score($stripped_text);
+        // $score = readability_score($stripped_text);
 
         //Display readability score
         $this->content = new stdClass();
-        $this->content->text = 'Readability Score: ' . $score;
+        $this->content->text = 'Readability Score: ';
 
         // Add button to open dashboard page
         $button = new single_button(new moodle_url('/blocks/readabilityscore/dashboard.php'), 'Dashboard');
