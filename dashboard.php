@@ -24,13 +24,20 @@ $PAGE->set_heading(get_string('pluginname', 'block_readabilityscore'));
 
 echo $OUTPUT->header();
 
-// Display a list of pages with readability scores
-$pages = get_readability_score_pages();
-foreach ($pages as $page) {
-    echo '<h2>' . $page->title . '</h2>';
-    echo '<p>Readability Score: ' . $page->score . '</p>';
-    echo '<p>' . $page->text . '</p>';
-    echo '<hr>';
+// Fetch all the scans from the database
+$scans = $DB->get_records('readability_scores');
+
+// Display the scans
+if (!empty($scans)) {
+    foreach ($scans as $scan) {
+        echo '<h2>User ID: ' . $scan->userid . '</h2>';
+        echo '<p>Readability Score: ' . $scan->score . '</p>';
+        echo '<p>Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated) . '</p>';
+        echo '<hr>';
+    }
+} else {
+    echo '<p>No scans found.</p>';
 }
 
 echo $OUTPUT->footer();
+?>

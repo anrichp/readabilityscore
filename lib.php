@@ -52,15 +52,19 @@ function calculate_readability_score($text) {
     return rand(0, 100); // Example: returning a random score for demonstration
 }
 
-function store_readability_score($userid, $score) {
+function store_readability_score($userid, $score, $selectedtext, $pageurl) {
     global $DB;
 
-    // Example table structure
+    // Create a new stdClass object to represent the record
     $record = new stdClass();
+
+    // Assign values to the fields
     $record->userid = $userid;
     $record->score = $score;
-    $record->timecreated = time();
+    $record->selectedtext = $selectedtext;
+    $record->pageurl = $pageurl;
+    $record->timecreated = time(); // Current timestamp
 
-    // Insert the record into your custom table
+    // Insert the record into the 'readability_scores' table
     $DB->insert_record('readability_scores', $record);
 }
