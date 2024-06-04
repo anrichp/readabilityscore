@@ -11,7 +11,7 @@ class block_readabilityscore_external extends external_api
         return new external_function_parameters(
             array(
                 'selectedtext' => new external_value(PARAM_TEXT, 'The selected text to be processed'),
-                'pageurl' => new external_value(PARAM_URL, 'The URL of the page where the text originated from')
+                'pageurl' => new external_value(PARAM_TEXT, 'The URL of the page where the text originated from')
             )
         );
     }
@@ -21,15 +21,12 @@ class block_readabilityscore_external extends external_api
         global $USER, $DB;
 
         // Parameter validation
-        $params = self::validate_parameters(self::process_text_parameters(), array(
-            'selectedtext' => $selectedtext,
-            'pageurl' => $pageurl
-        ));
+        $params = self::validate_parameters(self::process_text_parameters(), array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
 
         // Readability score calculation (implement this function as needed)
         $readabilityscore = calculate_readability_score($params['selectedtext']);
 
-        // Store the readability score in the database along with the selected text and page URL
+        // Store the readability score in the database (implement this function as needed)
         store_readability_score($USER->id, $readabilityscore, $params['selectedtext'], $params['pageurl']);
 
         // Return the result
