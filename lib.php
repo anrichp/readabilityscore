@@ -45,3 +45,22 @@ function get_readability_score_pages() {
 
     return $pages;
 }
+
+function calculate_readability_score($text) {
+    // Placeholder for readability calculation logic
+    // Replace this with actual logic to calculate readability
+    return rand(0, 100); // Example: returning a random score for demonstration
+}
+
+function store_readability_score($userid, $score) {
+    global $DB;
+
+    // Example table structure
+    $record = new stdClass();
+    $record->userid = $userid;
+    $record->score = $score;
+    $record->timecreated = time();
+
+    // Insert the record into your custom table
+    $DB->insert_record('readability_scores', $record);
+}

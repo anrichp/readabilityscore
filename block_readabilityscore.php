@@ -57,17 +57,16 @@ class block_readabilityscore extends block_base
      */
     public function get_content()
     {
-
         // Determine whether user is logged in
-        if (!isloggedin() or isguestuser()) {
-            // Only real users can access myprofile block.
+        if (!isloggedin() || isguestuser()) {
+            // Only real users can access this block.
             return;
         }
 
         // Instantiate global variables
         global $PAGE, $OUTPUT;
 
-        //Display readability score
+        // Display readability score
         $this->content = new stdClass();
         $this->content->text = 'Click on the scan button to trigger a new scan of the page';
 
@@ -79,7 +78,7 @@ class block_readabilityscore extends block_base
             single_button::BUTTON_PRIMARY // Button style
         );
 
-        // Add scan button to trigger javascript
+        // Add scan button to trigger JavaScript
         $scanButton = html_writer::tag('button', 'Scan', array('id' => 'scan-button', 'class' => 'btn btn-primary mt-1'));
 
         // Render the dashboard button
@@ -94,8 +93,9 @@ class block_readabilityscore extends block_base
         $this->content->text .= $selectedTextContainer;
 
         // Include the JavaScript file
-        $jsUrl = new moodle_url('/blocks/readabilityscore/js/readability.js');
-        $this->page->requires->js($jsUrl);
+        $PAGE->requires->js_call_amd('block_readabilityscore/main', 'init');
+
+        return $this->content;
     }
 
     /**
@@ -105,7 +105,6 @@ class block_readabilityscore extends block_base
      */
     public function specialization()
     {
-
         // Load user defined title and make sure it's never empty.
         if (empty($this->config->title)) {
             $this->title = get_string('pluginname', 'block_readabilityscore');

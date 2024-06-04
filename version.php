@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_readabilityscore';
-$plugin->release = '0.2.1';
-$plugin->version = 2024060300;
+$plugin->release = '0.2.3';
+$plugin->version = 2024060400;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;
