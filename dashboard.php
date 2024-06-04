@@ -32,6 +32,8 @@ if (!empty($scans)) {
     foreach ($scans as $scan) {
         echo '<h2>User ID: ' . $scan->userid . '</h2>';
         echo '<p>Readability Score: ' . $scan->score . '</p>';
+        echo '<p>Selected Text: ' . $scan->selectedtext . '</p>'; // Display selected text
+        echo '<p>Page URL: ' . $scan->pageurl . '</p>'; // Display page URL
         echo '<p>Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated) . '</p>';
         echo '<hr>';
     }
