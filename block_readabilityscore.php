@@ -45,7 +45,7 @@ class block_readabilityscore extends block_base
         return [
             'course-view' => true,
             'site' => true,
-            'mod' => false,
+            'mod' => true,
             'my' => false,
         ];
     }
