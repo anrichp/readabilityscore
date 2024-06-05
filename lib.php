@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 function readability_score($text) {
-    return $text;
+    // This function should calculate and return the readability score for the given text
+    return calculate_readability_score($text);
 }
-
 
 function debug_to_console($data) {
     $output = $data;
@@ -49,7 +49,10 @@ function get_readability_score_pages() {
 function calculate_readability_score($text) {
     // Placeholder for readability calculation logic
     // Replace this with actual logic to calculate readability
-    return rand(0, 100); // Example: returning a random score for demonstration
+
+    // Example readability calculation (e.g., Flesch-Kincaid, Gunning Fog, etc.)
+    // For now, returning a random score for demonstration purposes
+    return rand(0, 100);
 }
 
 function store_readability_score($userid, $score, $selectedtext, $pageurl) {

@@ -15,35 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External service definitions for the accessreview block.
+ * External service definitions for the readabilityscore block.
  *
  * @package    block_readabilityscore
  * @copyright  2024 Anrich Potgieter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
 
- $functions = array(
-     'block_readabilityscore_process_text' => array(
-         'classname'   => 'block_readabilityscore_external',
-         'methodname'  => 'process_text',
-         'classpath'   => 'blocks/readabilityscore/externallib.php',
-         'description' => 'Process selected text, calculate readability score, and store it in the database.',
-         'type'        => 'write',
-         'ajax'        => true,
-         'loginrequired' => true,
-         'parameters' => array(
-             'selectedtext' => array('type' => PARAM_TEXT, 'description' => 'The selected text to be processed'),
-             'pageurl' => array('type' => PARAM_TEXT, 'description' => 'The URL of the page where the text originated from')
-         )
-     ),
- );
- 
- $services = array(
-     'readabilityscore_service' => array(
-         'functions' => array('block_readabilityscore_process_text'),
-         'restrictedusers' => 0,
-         'enabled' => 1,
-     ),
- );
+$functions = array(
+    'block_readabilityscore_process_text' => array(
+        'classname'   => 'block_readabilityscore_external',
+        'methodname'  => 'process_text',
+        'classpath'   => 'blocks/readabilityscore/externallib.php',
+        'description' => 'Process selected text, calculate readability score, and store it in the database.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'loginrequired' => true,
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE), // Ensure it’s available for mobile
+    ),
+);
+
+$services = array(
+    'readabilityscore_service' => array(
+        'functions' => array('block_readabilityscore_process_text'),
+        'restrictedusers' => 0,
+        'enabled' => 1,
+    ),
+);

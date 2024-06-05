@@ -11,11 +11,10 @@ export const init = () => {
     }
 
     initialized = true;
-
     // eslint-disable-next-line no-console
     console.log('Executing init function logic');
 
-    var scanButton = document.getElementById('scan-button');
+    const scanButton = document.getElementById('scan-button');
     if (scanButton) {
         // eslint-disable-next-line no-console
         console.log('scanButton found:', scanButton);
@@ -24,7 +23,7 @@ export const init = () => {
             // eslint-disable-next-line no-console
             console.log('Scan button clicked');
 
-            var selectedTextContainer = document.getElementById('selected-text-container');
+            const selectedTextContainer = document.getElementById('selected-text-container');
             if (selectedTextContainer) {
                 // eslint-disable-next-line no-console
                 console.log('selectedTextContainer found:', selectedTextContainer);
@@ -36,8 +35,8 @@ export const init = () => {
 
             alert('Please select text on the page.');
 
-            var textSelectionHandler = function() {
-                var selectedText = window.getSelection().toString().trim();
+            const textSelectionHandler = function() {
+                const selectedText = window.getSelection().toString().trim();
                 // eslint-disable-next-line no-console
                 console.log('Selected text:', selectedText);
 
@@ -48,12 +47,16 @@ export const init = () => {
                         selectedTextContainer.textContent += selectedText;
                     }
 
-                    processText(selectedText).then(response => {
-                        alert('Readability Score: ' + response.readabilityscore);
-                    }).catch(error => {
-                        // eslint-disable-next-line no-console
-                        console.error('Error:', error);
-                    });
+                    const pageUrl = window.location.href; // Ensure pageUrl is correctly set
+
+                    processText(selectedText, pageUrl)
+                        .then(response => {
+                            alert('Readability Score: ' + response.readabilityscore);
+                        })
+                        .catch(error => {
+                            // eslint-disable-next-line no-console
+                            console.error('Error:', error);
+                        });
 
                     document.removeEventListener('mouseup', textSelectionHandler);
                 } else {
