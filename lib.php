@@ -20,15 +20,6 @@ function readability_score($text)
     return calculate_readability_score($text);
 }
 
-function debug_to_console($data)
-{
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
-
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
-
 // Helper function to count syllables in a word
 function count_syllables($word) {
     $word = strtolower($word);
