@@ -68,7 +68,6 @@ class block_readabilityscore extends block_base
 
         // Display readability score
         $this->content = new stdClass();
-        $this->content->text = 'Click on the scan button to trigger a new scan of the page';
 
         // Add button to open dashboard page
         $dashboardButton = new single_button(
