@@ -24,18 +24,42 @@ $PAGE->set_heading(get_string('pluginname', 'block_readabilityscore'));
 
 echo $OUTPUT->header();
 
-// Fetch all the scans from the database
-$scans = $DB->get_records('readability_scores');
+// Fetch all unique page URLs from the database
+$pageURLs = $DB->get_fieldset_select('readability_scores', 'DISTINCT pageurl', null, null, 'pageurl');
 
-// Display the scans
-if (!empty($scans)) {
-    foreach ($scans as $scan) {
-        echo '<h2>User ID: ' . $scan->userid . '</h2>';
-        echo '<p>Readability Score: ' . $scan->score . '</p>';
-        echo '<p>Selected Text: ' . $scan->selectedtext . '</p>'; // Display selected text
-        echo '<p>Page URL: ' . $scan->pageurl . '</p>'; // Display page URL
-        echo '<p>Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated) . '</p>';
-        echo '<hr>';
+if (!empty($pageURLs)) {
+    // Display form with dropdown to select page URL
+    echo '<form method="get">';
+    echo '<label for="page-url-select">Select Page URL:</label>';
+    echo '<select id="page-url-select" name="page_url">';
+    foreach ($pageURLs as $url) {
+        echo '<option value="' . $url . '">' . $url . '</option>';
+    }
+    echo '</select>';
+    echo '<button type="submit">View Scans</button>';
+    echo '</form>';
+
+    // Check if a specific page URL is selected
+    $selectedPageURL = optional_param('page_url', '', PARAM_TEXT);
+    if (!empty($selectedPageURL)) {
+        // Fetch scans for the selected page URL
+        $scans = $DB->get_records_select('readability_scores', 'pageurl = ?', array($selectedPageURL));
+
+        // Display the scans
+        if (!empty($scans)) {
+            foreach ($scans as $scan) {
+                echo '<h2>User ID: ' . $scan->userid . '</h2>';
+                echo '<p>Readability Score: ' . $scan->score . '</p>';
+                echo '<p>Selected Text: ' . $scan->selectedtext . '</p>'; // Display selected text
+                echo '<p>Page URL: ' . $scan->pageurl . '</p>'; // Display page URL
+                echo '<p>Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated) . '</p>';
+                echo '<hr>';
+            }
+        } else {
+            echo '<p>No scans found for the selected page URL.</p>';
+        }
+    } else {
+        echo '<p>Please select a page URL to view scans.</p>';
     }
 } else {
     echo '<p>No scans found.</p>';
