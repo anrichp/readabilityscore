@@ -66,6 +66,10 @@ class block_readabilityscore extends block_base
         // Instantiate global variables
         global $PAGE, $OUTPUT;
 
+        // Initialise the text property
+        $this->content = new stdClass();
+        $this->content->text = '';
+
         // Add button to open dashboard page
         $dashboardButton = new single_button(
             new moodle_url('/blocks/readabilityscore/dashboard.php'), // Replace with the correct URL for the dashboard
