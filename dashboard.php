@@ -50,7 +50,8 @@ if (!empty($pageURLs)) {
         $options[$url] = $url;
     }
     $select = html_writer::select($options, 'page_url', '', array('' => 'Select a page'), array('id' => 'page-url-select'));
-    $form = html_writer::tag('form', 
+    $form = html_writer::tag(
+        'form',
         html_writer::tag('label', 'Select Page URL:', array('for' => 'page-url-select')) . $select . html_writer::empty_tag('input', array('type' => 'submit', 'value' => 'View Scans')),
         array('method' => 'get')
     );
@@ -84,4 +85,3 @@ if (!empty($pageURLs)) {
 }
 
 echo $OUTPUT->footer();
-?>
