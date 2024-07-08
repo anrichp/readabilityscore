@@ -1,11 +1,11 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/blocks/readabilityscore/lib.php');
 
 class block_readabilityscore_external extends external_api
 {
-
     public static function process_text_parameters()
     {
         return new external_function_parameters(
@@ -21,12 +21,13 @@ class block_readabilityscore_external extends external_api
         global $USER, $DB;
 
         // Parameter validation
-        $params = self::validate_parameters(self::process_text_parameters(), array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
+        $params = self::validate_parameters(self::process_text_parameters(), 
+                                            array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
 
-        // Readability score calculation (implement this function as needed)
-        $readabilityscore = calculate_readability_score($params['selectedtext']);
+        // Readability score calculation
+        $readabilityscore = readability_score($params['selectedtext']);
 
-        // Store the readability score in the database (implement this function as needed)
+        // Store the readability score in the database
         store_readability_score($USER->id, $readabilityscore, $params['selectedtext'], $params['pageurl']);
 
         // Return the result
@@ -37,7 +38,7 @@ class block_readabilityscore_external extends external_api
     {
         return new external_single_structure(
             array(
-                'readabilityscore' => new external_value(PARAM_INT, 'The calculated readability score')
+                'readabilityscore' => new external_value(PARAM_FLOAT, 'The calculated readability score')
             )
         );
     }

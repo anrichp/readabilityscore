@@ -8,16 +8,38 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 function readability_score($text)
 {
-    // This function should calculate and return the readability score for the given text
-    return calculate_readability_score($text);
+    // This function calculates and returns the Gunning Fog Index for the given text
+    return calculate_gunning_fog_index($text);
+}
+
+// Helper function to count words in the text
+function count_words_custom($text) {
+    return str_word_count($text);
+}
+
+// Helper function to count sentences in the text
+function count_sentences($text) {
+    return max(1, preg_match_all('/[.!?]+/', $text));
+}
+
+// Helper function to count complex words (words with 3 or more syllables)
+function count_complex_words($text) {
+    $words = str_word_count($text, 1);
+    $complex_words = 0;
+    foreach ($words as $word) {
+        if (count_syllables($word) >= 3) {
+            $complex_words++;
+        }
+    }
+    return $complex_words;
 }
 
 // Helper function to count syllables in a word
@@ -27,66 +49,43 @@ function count_syllables($word) {
     if (strlen($word) === 0) {
         return 0;
     }
-
-    // Regex patterns for common syllable patterns
     $pattern = [
-        '/[aeiouy]{1,2}/', // vowel groups
-        '/[^aeiouy]/',     // non-vowel groups
-        '/(?:[^laeiouy]es|ed|[^laeiouy]e|[aeiouy]e)$/', // remove 'es', 'ed', 'e'
-        '/^y/'             // leading 'y' counts as a vowel
+        '/[aeiouy]{1,2}/',
+        '/[^aeiouy]/',
+        '/(?:[^laeiouy]es|ed|[^laeiouy]e|[aeiouy]e)$/',
+        '/^y/'
     ];
-
-    // Count the number of vowel groups in the word
     $syllable_count = preg_match_all($pattern[0], $word) - preg_match_all($pattern[2], $word) + preg_match_all($pattern[3], $word);
     return $syllable_count > 0 ? $syllable_count : 1;
 }
 
-// Helper function to count words in the text (rename to avoid conflict)
-function count_words_custom($text) {
-    $words = str_word_count($text, 1);
-    return count($words);
-}
+// Main function to calculate Gunning Fog Index
+function calculate_gunning_fog_index($text) {
+    $word_count = count_words_custom($text);
+    $sentence_count = count_sentences($text);
+    $complex_word_count = count_complex_words($text);
 
-// Helper function to count sentences in the text
-function count_sentences($text) {
-    $sentences = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-    return count($sentences);
-}
-
-// Main function to calculate readability score
-function calculate_readability_score($text) {
-    // Calculate total words, sentences, and syllables
-    $total_words = count_words_custom($text); // Use the renamed function
-    $total_sentences = count_sentences($text);
-    $total_syllables = 0;
-    $words = str_word_count($text, 1);
-    foreach ($words as $word) {
-        $total_syllables += count_syllables($word);
+    if ($word_count == 0 || $sentence_count == 0) {
+        return 0;
     }
 
-    // Calculate Flesch Reading Ease Score
-    $reading_ease = 206.835 - (1.015 * ($total_words / $total_sentences)) - (84.6 * ($total_syllables / $total_words));
+    $avg_sentence_length = $word_count / $sentence_count;
+    $percent_complex_words = ($complex_word_count / $word_count) * 100;
 
-    // Round the readability score to an integer
-    $rounded_reading_ease = round($reading_ease);
+    $gunning_fog_index = 0.4 * ($avg_sentence_length + $percent_complex_words);
 
-    return $rounded_reading_ease;
+    // Round the Gunning Fog Index to one decimal place
+    return round($gunning_fog_index, 1);
 }
 
 function store_readability_score($userid, $score, $selectedtext, $pageurl)
 {
     global $DB;
-
-    // Create a new stdClass object to represent the record
     $record = new stdClass();
-
-    // Assign values to the fields
     $record->userid = $userid;
     $record->score = $score;
     $record->selectedtext = $selectedtext;
     $record->pageurl = $pageurl;
-    $record->timecreated = time(); // Current timestamp
-
-    // Insert the record into the 'readability_scores' table
+    $record->timecreated = time();
     $DB->insert_record('readability_scores', $record);
 }

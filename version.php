@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_readabilityscore';
 $plugin->release = '0.2.5';
-$plugin->version = 2024060501;
+$plugin->version = 2024070801;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->uninstall = 'blocks/readabilityscore/db/uninstall.php';
