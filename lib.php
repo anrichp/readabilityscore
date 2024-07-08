@@ -83,7 +83,7 @@ function store_readability_score($userid, $score, $selectedtext, $pageurl)
     global $DB;
     $record = new stdClass();
     $record->userid = $userid;
-    $record->score = $score;
+    $record->score = (float)$score;
     $record->selectedtext = $selectedtext;
     $record->pageurl = $pageurl;
     $record->timecreated = time();
