@@ -14,72 +14,100 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
-function readability_score($text)
-{
-    // This function calculates and returns the Gunning Fog Index for the given text
-    return calculate_gunning_fog_index($text);
-}
+class TextStatistics {
+    private $lang = "en_US";
+    private $round_outputs = true;
+    private $round_points = null;
+    private $rm_apostrophe = true;
 
-// Helper function to count words in the text
-function count_words_custom($text) {
-    return str_word_count($text);
-}
+    public function readability_score($text) {
+        return $this->gunning_fog($text);
+    }
 
-// Helper function to count sentences in the text
-function count_sentences($text) {
-    return max(1, preg_match_all('/[.!?]+/', $text));
-}
-
-// Helper function to count complex words (words with 3 or more syllables)
-function count_complex_words($text) {
-    $words = str_word_count($text, 1);
-    $complex_words = 0;
-    foreach ($words as $word) {
-        if (count_syllables($word) >= 3) {
-            $complex_words++;
+    public function gunning_fog($text) {
+        $syllable_threshold = $this->get_lang_cfg("syllable_threshold", 3);
+        try {
+            $per_diff_words = ($this->difficult_words($text, $syllable_threshold) / $this->lexicon_count($text)) * 100;
+            $grade = 0.4 * ($this->avg_sentence_length($text) + $per_diff_words);
+            return $this->legacy_round($grade, 2);
+        } catch (Exception $e) {
+            return 0.0;
         }
     }
-    return $complex_words;
-}
 
-// Helper function to count syllables in a word
-function count_syllables($word) {
-    $word = strtolower($word);
-    $word = preg_replace('/[^a-z]/', '', $word);
-    if (strlen($word) === 0) {
-        return 0;
-    }
-    $pattern = [
-        '/[aeiouy]{1,2}/',
-        '/[^aeiouy]/',
-        '/(?:[^laeiouy]es|ed|[^laeiouy]e|[aeiouy]e)$/',
-        '/^y/'
-    ];
-    $syllable_count = preg_match_all($pattern[0], $word) - preg_match_all($pattern[2], $word) + preg_match_all($pattern[3], $word);
-    return $syllable_count > 0 ? $syllable_count : 1;
-}
-
-// Main function to calculate Gunning Fog Index
-function calculate_gunning_fog_index($text) {
-    $word_count = count_words_custom($text);
-    $sentence_count = count_sentences($text);
-    $complex_word_count = count_complex_words($text);
-
-    if ($word_count == 0 || $sentence_count == 0) {
-        return 0;
+    private function get_lang_cfg($key, $default) {
+        return $default;
     }
 
-    $avg_sentence_length = $word_count / $sentence_count;
-    $percent_complex_words = ($complex_word_count / $word_count) * 100;
+    private function difficult_words($text, $syllable_threshold) {
+        $words = $this->remove_punctuation($text);
+        $words = preg_split('/\s+/', $words, -1, PREG_SPLIT_NO_EMPTY);
+        $diff_words_count = 0;
+        foreach ($words as $word) {
+            if ($this->syllable_count($word) >= $syllable_threshold) {
+                $diff_words_count++;
+            }
+        }
+        return $diff_words_count;
+    }
 
-    $gunning_fog_index = 0.4 * ($avg_sentence_length + $percent_complex_words);
+    private function remove_punctuation($text) {
+        if ($this->rm_apostrophe) {
+            $pattern = '/[^\p{L}\p{N}\s]/u';
+        } else {
+            $text = preg_replace("/\'(?![tsd]\b|ve\b|ll\b|re\b)/u", '"', $text);
+            $pattern = '/[^\p{L}\p{N}\s\']/u';
+        }
+        return preg_replace($pattern, '', $text);
+    }
 
-    // Round the Gunning Fog Index to one decimal place
-    return round($gunning_fog_index, 1);
+    private function syllable_count($word) {
+        $word = mb_strtolower($word, 'UTF-8');
+        $word = preg_replace('/[^a-z]/u', '', $word);
+        if (mb_strlen($word) <= 3) {
+            return 1;
+        }
+        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
+        $word = preg_replace('/^y/', '', $word);
+        $matches = preg_match_all('/[aeiouy]{1,2}/', $word, $parts);
+        return max(1, $matches);
+    }
+
+    private function lexicon_count($text, $removepunct = true) {
+        if ($removepunct) {
+            $text = $this->remove_punctuation($text);
+        }
+        $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        return count($words);
+    }
+
+    private function sentence_count($text) {
+        $sentences = preg_split('/(?<=[.!?])\s+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+        return max(1, count($sentences));
+    }
+
+    private function avg_sentence_length($text) {
+        $asl = $this->lexicon_count($text) / $this->sentence_count($text);
+        return $this->legacy_round($asl, 1);
+    }
+
+    private function legacy_round($number, $precision = 0) {
+        $precision = $this->round_points !== null ? $this->round_points : $precision;
+        if ($this->round_outputs) {
+            $factor = pow(10, $precision);
+            return floor(($number * $factor) + 0.5) / $factor;
+        } else {
+            return $number;
+        }
+    }
 }
 
-function store_readability_score($userid, $score, $selectedtext, $pageurl)
-{
+function readability_score($text) {
+    $textstat = new TextStatistics();
+    return $textstat->readability_score($text);
+}
+
+function store_readability_score($userid, $score, $selectedtext, $pageurl) {
     global $DB;
     $record = new stdClass();
     $record->userid = $userid;
