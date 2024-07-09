@@ -15,37 +15,32 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 class TextStatistics {
-    private $round_outputs = true;
-
-    public function set_round_outputs($round) {
-        $this->round_outputs = $round;
+    public function remove_punctuation($text) {
+        return preg_replace('/[^\w\s]/', '', $text);
     }
 
-    private function legacy_round($number, $precision = 2) {
-        if ($this->round_outputs) {
-            return round($number, $precision);
+    public function lexicon_count($text, $removepunct = true) {
+        if ($removepunct) {
+            $text = $this->remove_punctuation($text);
         }
-        return $number;
-    }
-
-    public function lexicon_count($text) {
-        $text = preg_replace('/[^a-zA-Z\s]/', '', $text);
         return count(preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY));
     }
 
     public function sentence_count($text) {
-        return max(1, preg_match_all('/[.!?]+/', $text));
-    }
-
-    public function avg_sentence_length($text) {
-        $words = $this->lexicon_count($text);
-        $sentences = $this->sentence_count($text);
-        return $words / $sentences;
+        // Split the text into sentences
+        $sentences = preg_split('/(?<=[.!?])\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        
+        // Filter out sentences that are likely to be abbreviations or initials
+        $sentences = array_filter($sentences, function($sentence) {
+            return strlen($sentence) > 2 && !preg_match('/^[A-Z]\.$/', trim($sentence));
+        });
+        
+        return max(1, count($sentences));
     }
 
     public function syllable_count($word) {
         $word = strtolower($word);
-        $word = preg_replace('/[^a-z]/', '', $word);
+        $word = $this->remove_punctuation($word);
         
         if (strlen($word) <= 3) {
             return 1;
@@ -58,31 +53,63 @@ class TextStatistics {
         return max(1, $syllables);
     }
 
-    public function polysyllabcount($text) {
-        $words = preg_split('/\s+/', $text);
-        $polysyllable_count = 0;
+    public function difficult_words($text) {
+        $words = preg_split('/\s+/', $this->remove_punctuation($text));
+        $diff_words_count = 0;
         foreach ($words as $word) {
-            if ($this->syllable_count($word) >= 3) {
-                $polysyllable_count++;
+            if ($this->syllable_count($word) >= 3 && !$this->is_proper_noun($word)) {
+                $diff_words_count++;
             }
         }
-        return $polysyllable_count;
+        return $diff_words_count;
+    }
+    
+    private function is_proper_noun($word) {
+        return ctype_upper($word[0]);
     }
 
     public function gunning_fog($text) {
         $words = $this->lexicon_count($text);
         $sentences = $this->sentence_count($text);
-        $polysyllables = $this->polysyllabcount($text);
+        $difficult_words = $this->difficult_words($text);
         
-        $fog_index = 0.4 * (($words / $sentences) + (100 * ($polysyllables / $words)));
+        $avg_sentence_length = $words / $sentences;
+        $percent_difficult_words = ($difficult_words / $words) * 100;
         
-        return $this->legacy_round($fog_index, 2);
+        $fog_index = 0.4 * ($avg_sentence_length + $percent_difficult_words);
+        
+        return round($fog_index, 2);
     }
+}
+
+function preprocess_text($text) {
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = preg_replace('/\s+/', ' ', $text);
+    return trim($text);
 }
 
 function readability_score($text) {
     $textstat = new TextStatistics();
-    return $textstat->gunning_fog($text);
+    $preprocessed_text = preprocess_text($text);
+    return $textstat->gunning_fog($preprocessed_text);
+}
+
+function debug_readability_score($text) {
+    $textstat = new TextStatistics();
+    $preprocessed_text = preprocess_text($text);
+    $words = $textstat->lexicon_count($preprocessed_text);
+    $sentences = $textstat->sentence_count($preprocessed_text);
+    $difficult_words = $textstat->difficult_words($preprocessed_text);
+    $fog_index = $textstat->gunning_fog($preprocessed_text);
+    
+    return [
+        'preprocessed_text' => $preprocessed_text,
+        'word_count' => $words,
+        'sentence_count' => $sentences,
+        'difficult_word_count' => $difficult_words,
+        'gunning_fog_index' => $fog_index
+    ];
 }
 
 function store_readability_score($userid, $score, $selectedtext, $pageurl) {

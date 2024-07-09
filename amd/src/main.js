@@ -61,6 +61,19 @@ export const init = () => {
                         processText(selectedText, pageUrl)
                             .then(response => {
                                 alert('Readability Score: ' + response.readabilityscore);
+                                // eslint-disable-next-line no-console
+                                console.log('Debug Info:', JSON.parse(response.debug_info));
+                                // Display debug info on the page
+                                const debugInfo = JSON.parse(response.debug_info);
+                                const debugParagraph = document.createElement('p');
+                                debugParagraph.innerHTML = `
+                                    <strong>Debug Information:</strong><br>
+                                    Word Count: ${debugInfo.word_count}<br>
+                                    Sentence Count: ${debugInfo.sentence_count}<br>
+                                    Difficult Word Count: ${debugInfo.difficult_word_count}<br>
+                                    Gunning Fog Index: ${debugInfo.gunning_fog_index}
+                                `;
+                                selectedTextContainer.appendChild(debugParagraph);
                             })
                             .catch(error => {
                                 // eslint-disable-next-line no-console
