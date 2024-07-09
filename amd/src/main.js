@@ -32,7 +32,19 @@ export const init = () => {
                 alert('Please select text on the page.');
 
                 const textSelectionHandler = function() {
-                    const selectedText = window.getSelection().toString().trim();
+                    const selection = window.getSelection();
+                    let selectedText = '';
+
+                    // Iterate through the selected ranges
+                    for (let i = 0; i < selection.rangeCount; i++) {
+                        const range = selection.getRangeAt(i);
+                        const container = document.createElement('div');
+                        container.appendChild(range.cloneContents());
+                        selectedText += container.innerText || container.textContent;
+                    }
+
+                    selectedText = selectedText.replace(/\s+/g, ' ').trim();
+
                     // eslint-disable-next-line no-console
                     console.log('Selected text:', selectedText);
 

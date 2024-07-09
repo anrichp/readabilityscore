@@ -15,96 +15,74 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 class TextStatistics {
-    private $lang = "en_US";
     private $round_outputs = true;
-    private $round_points = null;
-    private $rm_apostrophe = true;
 
-    public function readability_score($text) {
-        return $this->gunning_fog($text);
+    public function set_round_outputs($round) {
+        $this->round_outputs = $round;
+    }
+
+    private function legacy_round($number, $precision = 2) {
+        if ($this->round_outputs) {
+            return round($number, $precision);
+        }
+        return $number;
+    }
+
+    public function lexicon_count($text) {
+        $text = preg_replace('/[^a-zA-Z\s]/', '', $text);
+        return count(preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY));
+    }
+
+    public function sentence_count($text) {
+        return max(1, preg_match_all('/[.!?]+/', $text));
+    }
+
+    public function avg_sentence_length($text) {
+        $words = $this->lexicon_count($text);
+        $sentences = $this->sentence_count($text);
+        return $words / $sentences;
+    }
+
+    public function syllable_count($word) {
+        $word = strtolower($word);
+        $word = preg_replace('/[^a-z]/', '', $word);
+        
+        if (strlen($word) <= 3) {
+            return 1;
+        }
+        
+        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
+        $word = preg_replace('/^y/', '', $word);
+        
+        $syllables = preg_match_all('/[aeiouy]{1,2}/', $word);
+        return max(1, $syllables);
+    }
+
+    public function polysyllabcount($text) {
+        $words = preg_split('/\s+/', $text);
+        $polysyllable_count = 0;
+        foreach ($words as $word) {
+            if ($this->syllable_count($word) >= 3) {
+                $polysyllable_count++;
+            }
+        }
+        return $polysyllable_count;
     }
 
     public function gunning_fog($text) {
-        $syllable_threshold = $this->get_lang_cfg("syllable_threshold", 3);
-        try {
-            $per_diff_words = ($this->difficult_words($text, $syllable_threshold) / $this->lexicon_count($text)) * 100;
-            $grade = 0.4 * ($this->avg_sentence_length($text) + $per_diff_words);
-            return $this->legacy_round($grade, 2);
-        } catch (Exception $e) {
-            return 0.0;
-        }
-    }
-
-    private function get_lang_cfg($key, $default) {
-        return $default;
-    }
-
-    private function difficult_words($text, $syllable_threshold) {
-        $words = $this->remove_punctuation($text);
-        $words = preg_split('/\s+/', $words, -1, PREG_SPLIT_NO_EMPTY);
-        $diff_words_count = 0;
-        foreach ($words as $word) {
-            if ($this->syllable_count($word) >= $syllable_threshold) {
-                $diff_words_count++;
-            }
-        }
-        return $diff_words_count;
-    }
-
-    private function remove_punctuation($text) {
-        if ($this->rm_apostrophe) {
-            $pattern = '/[^\p{L}\p{N}\s]/u';
-        } else {
-            $text = preg_replace("/\'(?![tsd]\b|ve\b|ll\b|re\b)/u", '"', $text);
-            $pattern = '/[^\p{L}\p{N}\s\']/u';
-        }
-        return preg_replace($pattern, '', $text);
-    }
-
-    private function syllable_count($word) {
-        $word = mb_strtolower($word, 'UTF-8');
-        $word = preg_replace('/[^a-z]/u', '', $word);
-        if (mb_strlen($word) <= 3) {
-            return 1;
-        }
-        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
-        $word = preg_replace('/^y/', '', $word);
-        $matches = preg_match_all('/[aeiouy]{1,2}/', $word, $parts);
-        return max(1, $matches);
-    }
-
-    private function lexicon_count($text, $removepunct = true) {
-        if ($removepunct) {
-            $text = $this->remove_punctuation($text);
-        }
-        $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-        return count($words);
-    }
-
-    private function sentence_count($text) {
-        $sentences = preg_split('/(?<=[.!?])\s+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
-        return max(1, count($sentences));
-    }
-
-    private function avg_sentence_length($text) {
-        $asl = $this->lexicon_count($text) / $this->sentence_count($text);
-        return $this->legacy_round($asl, 1);
-    }
-
-    private function legacy_round($number, $precision = 0) {
-        $precision = $this->round_points !== null ? $this->round_points : $precision;
-        if ($this->round_outputs) {
-            $factor = pow(10, $precision);
-            return floor(($number * $factor) + 0.5) / $factor;
-        } else {
-            return $number;
-        }
+        $words = $this->lexicon_count($text);
+        $sentences = $this->sentence_count($text);
+        $polysyllables = $this->polysyllabcount($text);
+        
+        $fog_index = 0.4 * (($words / $sentences) + (100 * ($polysyllables / $words)));
+        
+        return $this->legacy_round($fog_index, 2);
     }
 }
 
 function readability_score($text) {
     $textstat = new TextStatistics();
-    return $textstat->readability_score($text);
+    return $textstat->gunning_fog($text);
 }
 
 function store_readability_score($userid, $score, $selectedtext, $pageurl) {
