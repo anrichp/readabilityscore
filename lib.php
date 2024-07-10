@@ -15,70 +15,54 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 class TextStatistics {
-    public function remove_punctuation($text) {
-        return preg_replace('/[^\w\s]/', '', $text);
-    }
-
-    public function lexicon_count($text, $removepunct = true) {
-        if ($removepunct) {
-            $text = $this->remove_punctuation($text);
-        }
-        return count(preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY));
+    public function word_count($text) {
+        return str_word_count($text);
     }
 
     public function sentence_count($text) {
-        // Split the text into sentences
-        $sentences = preg_split('/(?<=[.!?])\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-        
-        // Filter out sentences that are likely to be abbreviations or initials
-        $sentences = array_filter($sentences, function($sentence) {
-            return strlen($sentence) > 2 && !preg_match('/^[A-Z]\.$/', trim($sentence));
-        });
-        
-        return max(1, count($sentences));
+        return max(1, preg_match_all('/[.!?]+/', $text));
     }
 
-    public function syllable_count($word) {
-        $word = strtolower($word);
-        $word = $this->remove_punctuation($word);
-        
-        if (strlen($word) <= 3) {
-            return 1;
-        }
-        
-        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
-        $word = preg_replace('/^y/', '', $word);
-        
-        $syllables = preg_match_all('/[aeiouy]{1,2}/', $word);
-        return max(1, $syllables);
-    }
-
-    public function difficult_words($text) {
-        $words = preg_split('/\s+/', $this->remove_punctuation($text));
-        $diff_words_count = 0;
+    public function complex_word_count($text) {
+        $words = str_word_count($text, 1);
+        $complex_words = 0;
         foreach ($words as $word) {
-            if ($this->syllable_count($word) >= 3 && !$this->is_proper_noun($word)) {
-                $diff_words_count++;
+            if ($this->is_complex_word($word)) {
+                $complex_words++;
             }
         }
-        return $diff_words_count;
+        return $complex_words;
     }
-    
-    private function is_proper_noun($word) {
-        return ctype_upper($word[0]);
+
+    private function is_complex_word($word) {
+        // Remove common suffixes
+        $word = preg_replace('/(es|ed|ing)$/', '', $word);
+        
+        // Don't count proper nouns or compound words
+        if (ctype_upper($word[0]) || strpos($word, '-') !== false) {
+            return false;
+        }
+        
+        return $this->syllable_count($word) > 2;
+    }
+
+    private function syllable_count($word) {
+        $word = strtolower($word);
+        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
+        $word = preg_replace('/^y/', '', $word);
+        $count = preg_match_all('/[aeiouy]{1,2}/', $word);
+        return max(1, $count);
     }
 
     public function gunning_fog($text) {
-        $words = $this->lexicon_count($text);
+        $words = $this->word_count($text);
         $sentences = $this->sentence_count($text);
-        $difficult_words = $this->difficult_words($text);
+        $complex_words = $this->complex_word_count($text);
         
         $avg_sentence_length = $words / $sentences;
-        $percent_difficult_words = ($difficult_words / $words) * 100;
+        $percent_complex_words = 100 * ($complex_words / $words);
         
-        $fog_index = 0.4 * ($avg_sentence_length + $percent_difficult_words);
-        
-        return round($fog_index, 2);
+        return 0.4 * ($avg_sentence_length + $percent_complex_words);
     }
 }
 
@@ -92,23 +76,23 @@ function preprocess_text($text) {
 function readability_score($text) {
     $textstat = new TextStatistics();
     $preprocessed_text = preprocess_text($text);
-    return $textstat->gunning_fog($preprocessed_text);
+    return round($textstat->gunning_fog($preprocessed_text), 2);
 }
 
 function debug_readability_score($text) {
     $textstat = new TextStatistics();
     $preprocessed_text = preprocess_text($text);
-    $words = $textstat->lexicon_count($preprocessed_text);
+    $words = $textstat->word_count($preprocessed_text);
     $sentences = $textstat->sentence_count($preprocessed_text);
-    $difficult_words = $textstat->difficult_words($preprocessed_text);
+    $complex_words = $textstat->complex_word_count($preprocessed_text);
     $fog_index = $textstat->gunning_fog($preprocessed_text);
     
     return [
         'preprocessed_text' => $preprocessed_text,
         'word_count' => $words,
         'sentence_count' => $sentences,
-        'difficult_word_count' => $difficult_words,
-        'gunning_fog_index' => $fog_index
+        'complex_word_count' => $complex_words,
+        'gunning_fog_index' => round($fog_index, 2)
     ];
 }
 
