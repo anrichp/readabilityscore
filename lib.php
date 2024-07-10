@@ -15,7 +15,55 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 class TextStatistics {
-    // ... (existing TextStatistics class code remains unchanged)
+    public function word_count($text) {
+        return str_word_count($text);
+    }
+
+    public function sentence_count($text) {
+        return max(1, preg_match_all('/[.!?]+/', $text));
+    }
+
+    public function complex_word_count($text) {
+        $words = str_word_count($text, 1);
+        $complex_words = 0;
+        foreach ($words as $word) {
+            if ($this->is_complex_word($word)) {
+                $complex_words++;
+            }
+        }
+        return $complex_words;
+    }
+
+    private function is_complex_word($word) {
+        // Remove common suffixes
+        $word = preg_replace('/(es|ed|ing)$/', '', $word);
+        
+        // Don't count proper nouns or compound words
+        if (ctype_upper($word[0]) || strpos($word, '-') !== false) {
+            return false;
+        }
+        
+        return $this->syllable_count($word) > 2;
+    }
+
+    private function syllable_count($word) {
+        $word = strtolower($word);
+        $word = preg_replace('/(?:[^laeiouy]es|ed|[^laeiouy]e)$/', '', $word);
+        $word = preg_replace('/^y/', '', $word);
+        $count = preg_match_all('/[aeiouy]{1,2}/', $word);
+        return max(1, $count);
+    }
+
+    public function gunning_fog($text) {
+        $words = $this->word_count($text);
+        $sentences = $this->sentence_count($text);
+        $complex_words = $this->complex_word_count($text);
+        
+        $avg_sentence_length = $words / $sentences;
+        $percent_complex_words = 100 * ($complex_words / $words);
+        
+        return 0.4 * ($avg_sentence_length + $percent_complex_words);
+    }
 }
 
 function preprocess_text($text) {
@@ -57,13 +105,4 @@ function store_readability_score($userid, $score, $selectedtext, $pageurl) {
     $record->pageurl = $pageurl;
     $record->timecreated = time();
     $DB->insert_record('readability_scores', $record);
-}
-
-function store_performance_data($textlength, $executiontime) {
-    global $DB;
-    $record = new stdClass();
-    $record->textlength = $textlength;
-    $record->executiontime = $executiontime;
-    $record->timecreated = time();
-    $DB->insert_record('readability_performance', $record);
 }
