@@ -69,8 +69,8 @@ if (!empty($pageURLs)) {
             foreach ($scans as $scan) {
                 echo html_writer::tag('h2', 'User ID: ' . $scan->userid);
                 echo html_writer::tag('p', 'Readability Score: ' . $scan->score);
-                echo html_writer::tag('p', 'Selected Text: ' . $scan->selectedtext); // Display selected text
-                echo html_writer::tag('p', 'Page URL: ' . $scan->pageurl); // Display page URL
+                echo html_writer::tag('p', 'Selected Text: ' . $scan->selectedtext);
+                echo html_writer::tag('p', 'Page URL: ' . $scan->pageurl);
                 echo html_writer::tag('p', 'Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated));
                 echo html_writer::empty_tag('hr');
             }
@@ -82,6 +82,32 @@ if (!empty($pageURLs)) {
     }
 } else {
     echo html_writer::tag('p', 'No scans found.');
+}
+
+// Performance Statistics
+echo html_writer::tag('h2', 'Performance Statistics');
+
+// Fetch performance data
+$performance_data = $DB->get_records('readability_performance');
+
+if (!empty($performance_data)) {
+    $total_time = 0;
+    $total_length = 0;
+    $count = count($performance_data);
+
+    foreach ($performance_data as $data) {
+        $total_time += $data->executiontime;
+        $total_length += $data->textlength;
+    }
+
+    $avg_time = $total_time / $count;
+    $avg_length = $total_length / $count;
+
+    echo html_writer::tag('p', 'Average processing time: ' . number_format($avg_time, 6) . ' seconds');
+    echo html_writer::tag('p', 'Average text length: ' . number_format($avg_length, 2) . ' characters');
+    echo html_writer::tag('p', 'Total scans: ' . $count);
+} else {
+    echo html_writer::tag('p', 'No performance data available yet.');
 }
 
 echo $OUTPUT->footer();
