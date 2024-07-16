@@ -19,7 +19,7 @@ export const init = () => {
 function handleScanButtonClick() {
     const resultContainer = document.getElementById('readability-result');
     if (resultContainer) {
-        resultContainer.innerHTML = ''; // Clear existing content
+        resultContainer.innerHTML = '';
         alert('Please select text on the page to analyze its readability.');
         document.addEventListener('mouseup', textSelectionHandler);
     } else {
@@ -79,6 +79,21 @@ function handleProcessTextResponse(response) {
         <strong>Difficulty Level:</strong> ${difficultyLevel}
     `;
     resultContainer.appendChild(resultParagraph);
+
+    // Display remediation suggestions
+    if (response.remediationSuggestions && response.remediationSuggestions.length > 0) {
+        const suggestionsHeader = document.createElement('h4');
+        suggestionsHeader.textContent = 'Remediation Suggestions:';
+        resultContainer.appendChild(suggestionsHeader);
+
+        const suggestionsList = document.createElement('ul');
+        response.remediationSuggestions.forEach(suggestion => {
+            const listItem = document.createElement('li');
+            listItem.textContent = suggestion;
+            suggestionsList.appendChild(listItem);
+        });
+        resultContainer.appendChild(suggestionsList);
+    }
 }
 
 /**
