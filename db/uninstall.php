@@ -14,18 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Uninstallation script for the readabilityscore block.
+ *
+ * @package    block_readabilityscore
+ * @copyright  2024 Anrich Potgieter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Custom uninstallation procedure.
+ * Custom uninstallation procedure for the readabilityscore block.
+ *
+ * This function removes the database tables created by the block.
+ *
+ * @return bool True if uninstallation is successful, false otherwise.
  */
 function xmldb_block_readabilityscore_uninstall() {
     global $DB;
 
-    // Define the tables to be dropped.
+    // Define the tables to be dropped
     $tables = ['readabilityscore_pages', 'readability_scores'];
 
-    // Drop each table if it exists.
+    // Drop each table if it exists
     foreach ($tables as $table) {
         $table = new xmldb_table($table);
         if ($DB->get_manager()->table_exists($table)) {

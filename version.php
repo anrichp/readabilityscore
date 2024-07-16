@@ -24,9 +24,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// The name of the component. It always starts with 'block_' for blocks.
 $plugin->component = 'block_readabilityscore';
+
+// The release version of the plugin.
 $plugin->release = '0.2.5';
+
+// The version number of the plugin. This should be increased on each change.
 $plugin->version = 2024070802;
+
+// The minimum Moodle version required for this plugin to function.
 $plugin->requires = 2022112800;
+
+// The maturity level of the plugin. MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE.
 $plugin->maturity = MATURITY_ALPHA;
+
+// The location of the uninstall script for the plugin.
 $plugin->uninstall = 'blocks/readabilityscore/db/uninstall.php';

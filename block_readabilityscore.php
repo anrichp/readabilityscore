@@ -21,11 +21,14 @@
  * @copyright   2024 Anrich Potgieter <anrichp@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once(dirname(__FILE__) . '/lib.php');
 
+/**
+ * Readability Score block class.
+ */
 class block_readabilityscore extends block_base
 {
-
     /**
      * Initializes class member variables.
      */
@@ -72,7 +75,7 @@ class block_readabilityscore extends block_base
 
         // Add button to open dashboard page
         $dashboardButton = new single_button(
-            new moodle_url('/blocks/readabilityscore/dashboard.php'), // Replace with the correct URL for the dashboard
+            new moodle_url('/blocks/readabilityscore/dashboard.php'), // URL for the dashboard
             'Dashboard', // Button text
             'get', // Method
             single_button::BUTTON_PRIMARY // Button style

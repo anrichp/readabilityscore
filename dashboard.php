@@ -14,9 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Dashboard page for the readabilityscore block.
+ *
+ * This page displays a summary of readability scores using the Gunning Fog Index
+ * and allows users to view detailed scan results.
+ *
+ * @package    block_readabilityscore
+ * @copyright  2024 Anrich Potgieter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/blocks/readabilityscore/lib.php');
 
+// Set up the page
 $PAGE->set_url('/blocks/readabilityscore/dashboard.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('pluginname', 'block_readabilityscore'));
@@ -24,20 +36,22 @@ $PAGE->set_heading(get_string('pluginname', 'block_readabilityscore'));
 
 echo $OUTPUT->header();
 
-// Display the table describing the levels of readability difficulty
+// Display the table describing the Gunning Fog Index levels
 $table = new html_table();
-$table->head = array('Score Range', 'Difficulty Level', 'Notes');
+$table->head = array('Gunning Fog Index', 'Reading Level', 'Notes');
 $table->data = array(
-    array('90-100', 'Very Easy', 'Easily understood by an average 11-year-old student'),
-    array('80-89', 'Easy', 'Conversational English for consumers'),
-    array('70-79', 'Fairly Easy', 'Easily understood by 13- to 15-year-old students'),
-    array('60-69', 'Standard', 'Easily understood by 15- to 17-year-old students'),
-    array('50-59', 'Fairly Difficult', 'Fairly difficult to read'),
-    array('30-49', 'Difficult', 'College level and beyond'),
-    array('0-29', 'Very Confusing', 'Best understood by university graduates'),
+    array('6', 'Easy', 'Readable by a 6th grader'),
+    array('7', 'Fairly Easy', 'Readable by a 7th grader'),
+    array('8', 'Standard', 'Readable by an 8th grader'),
+    array('9', 'Fairly Difficult', 'Readable by a high school freshman'),
+    array('10', 'Difficult', 'Readable by a high school sophomore'),
+    array('11', 'Difficult', 'Readable by a high school junior'),
+    array('12', 'Very Difficult', 'Readable by a high school senior'),
+    array('13-16', 'College Level', 'Readable by college students'),
+    array('17+', 'Graduate Level', 'Readable by college graduates'),
 );
 
-echo html_writer::tag('h2', 'Readability Difficulty Levels');
+echo html_writer::tag('h2', 'Gunning Fog Index - Readability Levels');
 echo html_writer::table($table);
 
 // Fetch all unique page URLs from the database
@@ -68,9 +82,9 @@ if (!empty($pageURLs)) {
         if (!empty($scans)) {
             foreach ($scans as $scan) {
                 echo html_writer::tag('h2', 'User ID: ' . $scan->userid);
-                echo html_writer::tag('p', 'Readability Score: ' . $scan->score);
-                echo html_writer::tag('p', 'Selected Text: ' . $scan->selectedtext); // Display selected text
-                echo html_writer::tag('p', 'Page URL: ' . $scan->pageurl); // Display page URL
+                echo html_writer::tag('p', 'Gunning Fog Index: ' . number_format($scan->score, 2));
+                echo html_writer::tag('p', 'Selected Text: ' . $scan->selectedtext);
+                echo html_writer::tag('p', 'Page URL: ' . $scan->pageurl);
                 echo html_writer::tag('p', 'Time Created: ' . date('Y-m-d H:i:s', $scan->timecreated));
                 echo html_writer::empty_tag('hr');
             }

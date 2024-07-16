@@ -1,13 +1,16 @@
+// Import the processText function from the repository module
 import { processText } from './repository';
 
 /**
  * Initialize the readability score functionality.
+ * This function sets up the event listener for the scan button.
  */
 export const init = () => {
     const scanButton = document.getElementById('scan-button');
     if (scanButton) {
         scanButton.addEventListener('click', handleScanButtonClick);
     } else {
+        // Log an error if the scan button is not found
         // eslint-disable-next-line no-console
         console.log('scanButton not found');
     }
@@ -15,14 +18,19 @@ export const init = () => {
 
 /**
  * Handle the scan button click event.
+ * This function prepares the UI for text selection and sets up the mouseup event listener.
  */
 function handleScanButtonClick() {
     const resultContainer = document.getElementById('readability-result');
     if (resultContainer) {
+        // Clear any existing results
         resultContainer.innerHTML = '';
+        // Prompt the user to select text
         alert('Please select text on the page to analyze its readability.');
+        // Set up the mouseup event listener to capture text selection
         document.addEventListener('mouseup', textSelectionHandler);
     } else {
+        // Log an error if the result container is not found
         // eslint-disable-next-line no-console
         console.log('resultContainer not found');
     }
@@ -30,6 +38,7 @@ function handleScanButtonClick() {
 
 /**
  * Handle the text selection event.
+ * This function is called when the user releases the mouse button after selecting text.
  */
 function textSelectionHandler() {
     const selection = window.getSelection();
@@ -38,13 +47,16 @@ function textSelectionHandler() {
     if (selectedText !== '') {
         const pageUrl = window.location.href;
 
+        // Process the selected text
         processText(selectedText, pageUrl)
             .then(handleProcessTextResponse)
             .catch((error) => {
+                // Log any errors that occur during processing
                 // eslint-disable-next-line no-console
                 console.error('Error:', error);
             });
 
+        // Remove the mouseup event listener to prevent multiple selections
         document.removeEventListener('mouseup', textSelectionHandler);
     }
 }
@@ -52,7 +64,7 @@ function textSelectionHandler() {
 /**
  * Get the selected text from the selection object.
  * @param {Selection} selection - The selection object.
- * @returns {string} The selected text.
+ * @returns {string} The selected text, trimmed and with excess whitespace removed.
  */
 function getSelectedText(selection) {
     let selectedText = '';
@@ -62,17 +74,21 @@ function getSelectedText(selection) {
         container.appendChild(range.cloneContents());
         selectedText += container.innerText || container.textContent;
     }
+    // Remove excess whitespace and trim the selected text
     return selectedText.replace(/\s+/g, ' ').trim();
 }
 
 /**
  * Handle the response from processing the text.
+ * This function displays the readability score, difficulty level, and remediation suggestions.
  * @param {Object} response - The response object from processText.
  */
 function handleProcessTextResponse(response) {
     const resultContainer = document.getElementById('readability-result');
     const score = response.readabilityscore;
     const difficultyLevel = getDifficultyLevel(score);
+
+    // Create and populate the result paragraph
     const resultParagraph = document.createElement('p');
     resultParagraph.innerHTML = `
         <strong>Readability Score:</strong> ${score}<br>
@@ -80,7 +96,7 @@ function handleProcessTextResponse(response) {
     `;
     resultContainer.appendChild(resultParagraph);
 
-    // Display remediation suggestions
+    // Display remediation suggestions if available
     if (response.remediationSuggestions && response.remediationSuggestions.length > 0) {
         const suggestionsHeader = document.createElement('h4');
         suggestionsHeader.textContent = 'Remediation Suggestions:';

@@ -15,12 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * readabilityscore capabilities definition
+ * Readabilityscore capabilities definition
  *
- * This is file is required to store the block permissions in the db
- * https://moodledev.io/docs/4.4/apis/subsystems/access
- *
- * Once this file is created, version number must be increased to update
+ * This file defines the capabilities for the readabilityscore block.
+ * It's required to store the block permissions in the database.
+ * For more information, see: https://moodledev.io/docs/4.4/apis/subsystems/access
  *
  * @package    block_readabilityscore
  * @copyright  2024 Anrich Potgieter
@@ -31,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array (
     'block/readabilityscore:addinstance' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'riskbitmask' => RISK_XSS,  // This capability carries a risk of XSS (Cross-site scripting)
+        'captype' => 'write',  // This is a write-type capability
+        'contextlevel' => CONTEXT_BLOCK,  // This capability applies at the block context level
         'archetypes' => array (
-            'editingteacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,  // Editing teachers are allowed to add this block
         ),
     ),
 );
