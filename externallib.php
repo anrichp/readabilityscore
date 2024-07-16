@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External library functions for the readabilityscore block.
+ * External API for the readabilityscore block.
  *
  * @package    block_readabilityscore
  * @copyright  2024 Anrich Potgieter
@@ -27,9 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/blocks/readabilityscore/lib.php');
 
-/**
- * External API for the readabilityscore block.
- */
 class block_readabilityscore_external extends external_api
 {
     /**
@@ -58,21 +55,16 @@ class block_readabilityscore_external extends external_api
     {
         global $USER, $DB;
 
-        // Validate parameters
         $params = self::validate_parameters(self::process_text_parameters(), 
                                             array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
 
-        // Calculate readability score and get debug info
         $debug_info = debug_readability_score($params['selectedtext']);
         $score = $debug_info['gunning_fog_index'];
 
-        // Store the readability score in the database
         store_readability_score($USER->id, $score, $params['selectedtext'], $params['pageurl']);
 
-        // Generate remediation suggestions based on the score and debug info
         $remediationSuggestions = self::generate_remediation_suggestions($score, $debug_info);
 
-        // Return the results
         return array(
             'readabilityscore' => $score,
             'debug_info' => json_encode($debug_info),
@@ -101,9 +93,9 @@ class block_readabilityscore_external extends external_api
     }
 
     /**
-     * Generate remediation suggestions based on the readability score and debug info.
+     * Generate remediation suggestions based on the Gunning Fog Index score and debug info.
      *
-     * @param float $score The calculated readability score
+     * @param float $score The calculated Gunning Fog Index score
      * @param array $debug_info Debug information containing text statistics
      * @return array An array of remediation suggestions
      */
@@ -111,16 +103,29 @@ class block_readabilityscore_external extends external_api
     {
         $suggestions = array();
 
-        if ($score > 12) {
-            $suggestions[] = "Consider simplifying your language to improve readability.";
+        if ($score > 16) {
+            $suggestions[] = "The text is at a graduate level. Consider simplifying the language to make it more accessible to a broader audience.";
+            $suggestions[] = "Try to reduce the number of complex words (words with 3 or more syllables) where possible.";
+        } elseif ($score > 12) {
+            $suggestions[] = "The text is at a college level. If your target audience includes high school students or the general public, consider simplifying some terms.";
         }
 
-        if ($debug_info['sentence_count'] > 0 && $debug_info['word_count'] / $debug_info['sentence_count'] > 20) {
-            $suggestions[] = "Try to shorten your sentences. Aim for an average of 15-20 words per sentence.";
+        if ($debug_info['sentence_count'] > 0) {
+            $avg_sentence_length = $debug_info['word_count'] / $debug_info['sentence_count'];
+            if ($avg_sentence_length > 20) {
+                $suggestions[] = "Your sentences are quite long (average of " . round($avg_sentence_length, 1) . " words). Try to break up some longer sentences to improve readability.";
+            }
         }
 
-        if ($debug_info['complex_word_count'] / $debug_info['word_count'] > 0.1) {
-            $suggestions[] = "Use simpler words where possible. Try to reduce the number of complex words (words with 3 or more syllables).";
+        $complex_word_percentage = ($debug_info['complex_word_count'] / $debug_info['word_count']) * 100;
+        if ($complex_word_percentage > 10) {
+            $suggestions[] = round($complex_word_percentage, 1) . "% of your words are complex (3+ syllables). Consider using simpler alternatives where appropriate.";
+        }
+
+        if (empty($suggestions)) {
+            $suggestions[] = "Your text has good readability (Gunning Fog Index: " . round($score, 2) . "). Keep up the good work!";
+        } else {
+            array_unshift($suggestions, "Your text has a Gunning Fog Index of " . round($score, 2) . ". Here are some suggestions to improve readability:");
         }
 
         return $suggestions;
