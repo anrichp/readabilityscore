@@ -166,7 +166,7 @@ This plugin is licensed under the GNU GPL v3 or later. See the LICENCE file for 
 
 ## Support
 
-For support, please open an issue in our GitHub repository or contact anrichp@example.com.
+For support, please open an issue in our GitHub repository
 
 ## Credits
 
