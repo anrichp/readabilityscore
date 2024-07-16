@@ -87,11 +87,11 @@ class block_readabilityscore extends block_base
         $this->content->text .= $scanButton;
 
         // Add a container for displaying selected text
-        $selectedTextContainer = html_writer::tag('h4', 'Selected Text:', array('id' => 'selected-text-container'));
+        $selectedTextContainer = html_writer::tag('h4', 'Readability Result:', array('id' => 'selected-text-container'));
         $this->content->text .= $selectedTextContainer;
 
         // Add a div to hold the selected text
-        $selectedTextContainerDiv = html_writer::tag('div', '', array('id' => 'selected-text'));
+        $selectedTextContainerDiv = html_writer::tag('div', '', array('id' => 'readability-result'));
         $this->content->text .= $selectedTextContainerDiv;
 
         // Include the JavaScript file

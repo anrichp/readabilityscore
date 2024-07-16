@@ -1,102 +1,97 @@
 import { processText } from './repository';
 
-let initialized = false;
-
+/**
+ * Initialize the readability score functionality.
+ */
 export const init = () => {
-    // eslint-disable-next-line no-console
-    console.log("The init function was called");
-
-    if (initialized) {
-        return;
-    }
-
-    initialized = true;
-    // eslint-disable-next-line no-console
-    console.log('Executing init function logic');
-
     const scanButton = document.getElementById('scan-button');
     if (scanButton) {
-        // eslint-disable-next-line no-console
-        console.log('scanButton found:', scanButton);
-
-        scanButton.addEventListener('click', function() {
-            // eslint-disable-next-line no-console
-            console.log('Scan button clicked');
-
-            const selectedTextContainer = document.getElementById('selected-text');
-            if (selectedTextContainer) {
-                // eslint-disable-next-line no-console
-                console.log('selectedTextContainer found:', selectedTextContainer);
-                selectedTextContainer.innerHTML = ''; // Clear existing content
-
-                alert('Please select text on the page.');
-
-                const textSelectionHandler = function() {
-                    const selection = window.getSelection();
-                    let selectedText = '';
-
-                    // Iterate through the selected ranges
-                    for (let i = 0; i < selection.rangeCount; i++) {
-                        const range = selection.getRangeAt(i);
-                        const container = document.createElement('div');
-                        container.appendChild(range.cloneContents());
-                        selectedText += container.innerText || container.textContent;
-                    }
-
-                    selectedText = selectedText.replace(/\s+/g, ' ').trim();
-
-                    // eslint-disable-next-line no-console
-                    console.log('Selected text:', selectedText);
-
-                    if (selectedText !== '') {
-                        // eslint-disable-next-line no-console
-                        console.log('Selected text is not empty:', selectedText);
-
-                        const paragraph = document.createElement('p'); // Create a new paragraph element
-                        paragraph.textContent = selectedText; // Set the text content of the paragraph
-                        selectedTextContainer.appendChild(paragraph); // Append paragraph to selectedTextContainer
-
-                        const pageUrl = window.location.href; // Ensure pageUrl is correctly set
-
-                        processText(selectedText, pageUrl)
-                            .then(response => {
-                                alert('Readability Score: ' + response.readabilityscore);
-                                // eslint-disable-next-line no-console
-                                console.log('Debug Info:', JSON.parse(response.debug_info));
-                                // Display debug info on the page
-                                const debugInfo = JSON.parse(response.debug_info);
-                                const debugParagraph = document.createElement('p');
-                                debugParagraph.innerHTML = `
-                                    <strong>Debug Information:</strong><br>
-                                    Word Count: ${debugInfo.word_count}<br>
-                                    Sentence Count: ${debugInfo.sentence_count}<br>
-                                    Difficult Word Count: ${debugInfo.difficult_word_count}<br>
-                                    Gunning Fog Index: ${debugInfo.gunning_fog_index}
-                                `;
-                                selectedTextContainer.appendChild(debugParagraph);
-                            })
-                            .catch(error => {
-                                // eslint-disable-next-line no-console
-                                console.error('Error:', error);
-                            });
-
-                        document.removeEventListener('mouseup', textSelectionHandler);
-                    } else {
-                        // eslint-disable-next-line no-console
-                        console.log('No text selected');
-                    }
-                };
-
-                document.addEventListener('mouseup', textSelectionHandler);
-                // eslint-disable-next-line no-console
-                console.log('textSelectionHandler added');
-            } else {
-                // eslint-disable-next-line no-console
-                console.log('selectedTextContainer not found');
-            }
-        });
+        scanButton.addEventListener('click', handleScanButtonClick);
     } else {
         // eslint-disable-next-line no-console
         console.log('scanButton not found');
     }
 };
+
+/**
+ * Handle the scan button click event.
+ */
+function handleScanButtonClick() {
+    const resultContainer = document.getElementById('readability-result');
+    if (resultContainer) {
+        resultContainer.innerHTML = ''; // Clear existing content
+        alert('Please select text on the page to analyze its readability.');
+        document.addEventListener('mouseup', textSelectionHandler);
+    } else {
+        // eslint-disable-next-line no-console
+        console.log('resultContainer not found');
+    }
+}
+
+/**
+ * Handle the text selection event.
+ */
+function textSelectionHandler() {
+    const selection = window.getSelection();
+    const selectedText = getSelectedText(selection);
+
+    if (selectedText !== '') {
+        const pageUrl = window.location.href;
+
+        processText(selectedText, pageUrl)
+            .then(handleProcessTextResponse)
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.error('Error:', error);
+            });
+
+        document.removeEventListener('mouseup', textSelectionHandler);
+    }
+}
+
+/**
+ * Get the selected text from the selection object.
+ * @param {Selection} selection - The selection object.
+ * @returns {string} The selected text.
+ */
+function getSelectedText(selection) {
+    let selectedText = '';
+    for (let i = 0; i < selection.rangeCount; i++) {
+        const range = selection.getRangeAt(i);
+        const container = document.createElement('div');
+        container.appendChild(range.cloneContents());
+        selectedText += container.innerText || container.textContent;
+    }
+    return selectedText.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Handle the response from processing the text.
+ * @param {Object} response - The response object from processText.
+ */
+function handleProcessTextResponse(response) {
+    const resultContainer = document.getElementById('readability-result');
+    const score = response.readabilityscore;
+    const difficultyLevel = getDifficultyLevel(score);
+    const resultParagraph = document.createElement('p');
+    resultParagraph.innerHTML = `
+        <strong>Readability Score:</strong> ${score}<br>
+        <strong>Difficulty Level:</strong> ${difficultyLevel}
+    `;
+    resultContainer.appendChild(resultParagraph);
+}
+
+/**
+ * Get the difficulty level based on the readability score.
+ * @param {number} score - The readability score.
+ * @returns {string} The difficulty level description.
+ */
+function getDifficultyLevel(score) {
+    if (score <= 6) { return "Very Easy"; }
+    if (score <= 8) { return "Easy"; }
+    if (score <= 10) { return "Fairly Easy"; }
+    if (score <= 12) { return "Standard"; }
+    if (score <= 14) { return "Fairly Difficult"; }
+    if (score <= 18) { return "Difficult"; }
+    return "Very Difficult";
+}
