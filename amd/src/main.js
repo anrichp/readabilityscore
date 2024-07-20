@@ -91,8 +91,8 @@ function handleProcessTextResponse(response) {
     // Create and populate the result paragraph
     const resultParagraph = document.createElement('p');
     resultParagraph.innerHTML = `
-        <strong>Readability Score:</strong> ${score}<br>
-        <strong>Difficulty Level:</strong> ${difficultyLevel}
+        <strong>Gunning Fog Index:</strong> ${score.toFixed(1)}<br>
+        <strong>Reading Level:</strong> ${difficultyLevel}
     `;
     resultContainer.appendChild(resultParagraph);
 
@@ -113,16 +113,22 @@ function handleProcessTextResponse(response) {
 }
 
 /**
- * Get the difficulty level based on the readability score.
+ * Get the difficulty level based on the Gunning Fog Index score.
  * @param {number} score - The readability score.
- * @returns {string} The difficulty level description.
+ * @returns {string} The reading level description.
  */
 function getDifficultyLevel(score) {
-    if (score <= 6) { return "Very Easy"; }
-    if (score <= 8) { return "Easy"; }
-    if (score <= 10) { return "Fairly Easy"; }
-    if (score <= 12) { return "Standard"; }
-    if (score <= 14) { return "Fairly Difficult"; }
-    if (score <= 18) { return "Difficult"; }
-    return "Very Difficult";
+    if (score >= 17) return "College graduate";
+    if (score >= 16) return "College senior";
+    if (score >= 15) return "College junior";
+    if (score >= 14) return "College sophomore";
+    if (score >= 13) return "College freshman";
+    if (score >= 12) return "High school senior";
+    if (score >= 11) return "High school junior";
+    if (score >= 10) return "High school sophomore";
+    if (score >= 9) return "High school freshman";
+    if (score >= 8) return "Eighth grade";
+    if (score >= 7) return "Seventh grade";
+    if (score >= 6) return "Sixth grade";
+    return "Fifth grade or below";
 }
