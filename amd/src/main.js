@@ -118,17 +118,17 @@ function handleProcessTextResponse(response) {
  * @returns {string} The reading level description.
  */
 function getDifficultyLevel(score) {
-    if (score >= 17) return "College graduate";
-    if (score >= 16) return "College senior";
-    if (score >= 15) return "College junior";
-    if (score >= 14) return "College sophomore";
-    if (score >= 13) return "College freshman";
-    if (score >= 12) return "High school senior";
-    if (score >= 11) return "High school junior";
-    if (score >= 10) return "High school sophomore";
-    if (score >= 9) return "High school freshman";
-    if (score >= 8) return "Eighth grade";
-    if (score >= 7) return "Seventh grade";
-    if (score >= 6) return "Sixth grade";
+    if (score >= 17) { return "College graduate"; }
+    if (score >= 16) { return "College senior"; }
+    if (score >= 15) { return "College junior"; }
+    if (score >= 14) { return "College sophomore"; }
+    if (score >= 13) { return "College freshman"; }
+    if (score >= 12) { return "High school senior"; }
+    if (score >= 11) { return "High school junior"; }
+    if (score >= 10) { return "High school sophomore"; }
+    if (score >= 9) { return "High school freshman"; }
+    if (score >= 8) { return "Eighth grade"; }
+    if (score >= 7) { return "Seventh grade"; }
+    if (score >= 6) { return "Sixth grade"; }
     return "Fifth grade or below";
 }
