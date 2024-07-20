@@ -91,7 +91,7 @@ function handleProcessTextResponse(response) {
     // Create and populate the result paragraph
     const resultParagraph = document.createElement('p');
     resultParagraph.innerHTML = `
-        <strong>Gunning Fog Index:</strong> ${score.toFixed(1)}<br>
+        <strong>Gunning Fog Index:</strong> ${score.toFixed(2)}<br>
         <strong>Reading Level:</strong> ${difficultyLevel}
     `;
     resultContainer.appendChild(resultParagraph);
