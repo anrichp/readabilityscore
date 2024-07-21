@@ -1,4 +1,4 @@
-@block @block_readabilityscore @javascript
+@block @block_readabilityscore
 Feature: Readability Score Block Visibility and Access
     In order to use the readability score functionality
     As a teacher
