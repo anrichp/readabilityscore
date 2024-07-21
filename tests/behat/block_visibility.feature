@@ -1,4 +1,3 @@
-@block @block_readabilityscore
 Feature: Readability Score Block Visibility and Access
     In order to use the readability score functionality
     As a teacher
@@ -6,17 +5,18 @@ Feature: Readability Score Block Visibility and Access
 
     Background:
         Given the following "users" exist:
-            | username | firstname | lastname | email                |
-            | teacher1 | Teacher   | 1        | teacher1@example.com |
+            | username  | firstname | lastname | email                 |
+            | teacher1  | Teacher   | 1        | teacher1@example.com  |
         And the following "courses" exist:
-            | fullname | shortname |
-            | Course 1 | C1        |
+            | fullname  | shortname |
+            | Course 1  | C1        |
         And the following "course enrolments" exist:
-            | user     | course | role           |
-            | teacher1 | C1     | editingteacher |
+            | user      | course | role           |
+            | teacher1  | C1     | editingteacher |
 
     Scenario: Block is visible for teachers
         Given I log in as "teacher1"
-        And I am on "Course 1" course homepage with editing mode on
+        And I am on the "Course 1" course homepage
+        And I turn editing mode on
         When I add the "Readability Score" block
-        Then I should see "Readability Score" in the "Readability Score" "block"
+        Then I should see "Readability Score" in the "blocks" region
