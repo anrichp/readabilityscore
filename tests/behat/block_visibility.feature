@@ -17,7 +17,7 @@ Feature: Readability Score Block Visibility and Access
 
     Scenario: Block is visible for teachers
         Given I log in as "teacher1"
-        And I navigate to course "Course 1" in current page
+        And I am on "Course 1" course homepage
         And I turn editing mode on
         When I add the "Readability Score" block
-        Then I should see "Readability Score" in the "blocks" region
+        Then I should see "Readability Score" in the "block_readabilityscore" "block"
