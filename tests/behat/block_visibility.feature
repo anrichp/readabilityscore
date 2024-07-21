@@ -6,14 +6,14 @@ Feature: Readability Score Block Visibility and Access
 
     Background:
         Given the following "users" exist:
-            | username  | firstname | lastname | email                 |
-            | teacher1  | Teacher   | 1        | teacher1@example.com  |
+            | username | firstname | lastname | email                |
+            | teacher1 | Teacher   | 1        | teacher1@example.com |
         And the following "courses" exist:
-            | fullname  | shortname |
-            | Course 1  | course1        |
+            | fullname | shortname |
+            | Course 1 | course1   |
         And the following "course enrolments" exist:
-            | user      | course | role           |
-            | teacher1  | course1     | editingteacher |
+            | user     | course  | role           |
+            | teacher1 | course1 | editingteacher |
 
     Scenario: Block is visible for teachers
         Given I log in as "teacher1"
