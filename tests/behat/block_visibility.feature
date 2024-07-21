@@ -10,10 +10,10 @@ Feature: Readability Score Block Visibility and Access
             | teacher1  | Teacher   | 1        | teacher1@example.com  |
         And the following "courses" exist:
             | fullname  | shortname |
-            | Course 1  | C1        |
+            | Course 1  | course1        |
         And the following "course enrolments" exist:
             | user      | course | role           |
-            | teacher1  | C1     | editingteacher |
+            | teacher1  | course1     | editingteacher |
 
     Scenario: Block is visible for teachers
         Given I log in as "teacher1"
