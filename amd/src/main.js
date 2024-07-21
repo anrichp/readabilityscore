@@ -12,8 +12,15 @@ export const init = () => {
     } else {
         // Log an error if the scan button is not found
         // eslint-disable-next-line no-console
-        console.log('scanButton not found');
+        console.error('Scan button not found');
     }
+
+    // Create and append the instruction element
+    const instructionElement = document.createElement('div');
+    instructionElement.id = 'readability-instruction';
+    instructionElement.style.display = 'none';
+    instructionElement.innerHTML = 'Please select text on the page to analyze its readability.';
+    document.body.appendChild(instructionElement);
 };
 
 /**
@@ -22,18 +29,52 @@ export const init = () => {
  */
 function handleScanButtonClick() {
     const resultContainer = document.getElementById('readability-result');
-    if (resultContainer) {
+    const instructionElement = document.getElementById('readability-instruction');
+
+    if (resultContainer && instructionElement) {
         // Clear any existing results
         resultContainer.innerHTML = '';
-        // Prompt the user to select text
-        alert('Please select text on the page to analyze its readability.');
+
+        // Show and position the instruction immediately
+        showInstruction(instructionElement);
+
         // Set up the mouseup event listener to capture text selection
         document.addEventListener('mouseup', textSelectionHandler);
+
+        // Update instruction position on mouse move
+        document.addEventListener('mousemove', (e) => positionInstruction(instructionElement, e));
     } else {
-        // Log an error if the result container is not found
+        // Log an error if the result container or instruction element is not found
         // eslint-disable-next-line no-console
-        console.log('resultContainer not found');
+        console.error('Result container or instruction element not found');
     }
+}
+
+/**
+ * Show and position the instruction element.
+ * @param {HTMLElement} instructionElement - The instruction element.
+ */
+function showInstruction(instructionElement) {
+    instructionElement.style.display = 'block';
+    instructionElement.style.position = 'fixed';
+    instructionElement.style.zIndex = '100000';
+
+    // Position in the center of the viewport initially
+    const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    instructionElement.style.left = `${viewportWidth / 2 - instructionElement.offsetWidth / 2}px`;
+    instructionElement.style.top = `${viewportHeight / 2 - instructionElement.offsetHeight / 2}px`;
+}
+
+/**
+ * Position the instruction element near the mouse cursor.
+ * @param {HTMLElement} instructionElement - The instruction element.
+ * @param {MouseEvent} e - The mouse event object.
+ */
+function positionInstruction(instructionElement, e) {
+    instructionElement.style.left = `${e.clientX + 10}px`;
+    instructionElement.style.top = `${e.clientY + 10}px`;
 }
 
 /**
@@ -56,8 +97,17 @@ function textSelectionHandler() {
                 console.error('Error:', error);
             });
 
-        // Remove the mouseup event listener to prevent multiple selections
+        // Remove the mouseup and mousemove event listeners
         document.removeEventListener('mouseup', textSelectionHandler);
+        document.removeEventListener('mousemove', (e) =>
+            positionInstruction(document.getElementById('readability-instruction'), e)
+        );
+
+        // Hide the instruction
+        const instructionElement = document.getElementById('readability-instruction');
+        if (instructionElement) {
+            instructionElement.style.display = 'none';
+        }
     }
 }
 
@@ -91,8 +141,8 @@ function handleProcessTextResponse(response) {
     // Create and populate the result paragraph
     const resultParagraph = document.createElement('p');
     resultParagraph.innerHTML = `
-        <strong>Gunning Fog Index:</strong> ${score.toFixed(2)}<br>
-        <strong>Reading Level:</strong> ${difficultyLevel}
+        <strong>Readability Score:</strong> ${score}<br>
+        <strong>Difficulty Level:</strong> ${difficultyLevel}
     `;
     resultContainer.appendChild(resultParagraph);
 
@@ -114,21 +164,17 @@ function handleProcessTextResponse(response) {
 
 /**
  * Get the difficulty level based on the Gunning Fog Index score.
- * @param {number} score - The readability score.
- * @returns {string} The reading level description.
+ * @param {number} score - The Gunning Fog Index score.
+ * @returns {string} The difficulty level description.
  */
 function getDifficultyLevel(score) {
-    if (score >= 17) { return "College graduate"; }
-    if (score >= 16) { return "College senior"; }
-    if (score >= 15) { return "College junior"; }
-    if (score >= 14) { return "College sophomore"; }
-    if (score >= 13) { return "College freshman"; }
-    if (score >= 12) { return "High school senior"; }
-    if (score >= 11) { return "High school junior"; }
-    if (score >= 10) { return "High school sophomore"; }
-    if (score >= 9) { return "High school freshman"; }
-    if (score >= 8) { return "Eighth grade"; }
-    if (score >= 7) { return "Seventh grade"; }
-    if (score >= 6) { return "Sixth grade"; }
-    return "Fifth grade or below";
+    if (score <= 6) { return "Easy - Readable by a 6th grader"; }
+    if (score <= 7) { return "Fairly Easy - Readable by a 7th grader"; }
+    if (score <= 8) { return "Standard - Readable by an 8th grader"; }
+    if (score <= 9) { return "Fairly Difficult - Readable by a high school freshman"; }
+    if (score <= 10) { return "Difficult - Readable by a high school sophomore"; }
+    if (score <= 11) { return "Difficult - Readable by a high school junior"; }
+    if (score <= 12) { return "Very Difficult - Readable by a high school senior"; }
+    if (score <= 16) { return "College Level - Readable by college students"; }
+    return "Graduate Level - Readable by college graduates";
 }

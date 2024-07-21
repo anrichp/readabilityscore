@@ -69,6 +69,9 @@ class block_readabilityscore extends block_base
         // Instantiate global variables
         global $PAGE, $OUTPUT;
 
+        // Load the CSS file
+        $PAGE->requires->css('/blocks/readabilityscore/styles/readabilityscore.css');
+
         // Initialise the text property
         $this->content = new stdClass();
         $this->content->text = '';
