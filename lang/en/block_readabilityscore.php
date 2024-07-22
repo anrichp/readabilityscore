@@ -27,3 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Readability Score';
 $string['readabilityscore:addinstance'] = 'Add a readability score block';
+$string['dashboard'] = 'Dashboard';
+$string['dashboardtitle'] = 'Readability Score Dashboard';
