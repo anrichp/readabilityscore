@@ -75,7 +75,8 @@ class block_readabilityscore_external extends external_api
         $memory_used = $end_memory - $start_memory;
         $text_length = strlen($params['selectedtext']);
 
-        self::log_performance_data($execution_time, $memory_used, $text_length);
+        // Log the performance data
+        log_performance_data($execution_time, $memory_used, $text_length);
 
         return array(
             'readabilityscore' => $score,
