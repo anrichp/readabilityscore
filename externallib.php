@@ -81,12 +81,7 @@ class block_readabilityscore_external extends external_api
         return array(
             'readabilityscore' => $score,
             'debug_info' => json_encode($debug_info),
-            'remediationSuggestions' => $remediationSuggestions,
-            'performance' => array(
-                'execution_time' => $execution_time,
-                'memory_used' => $memory_used,
-                'text_length' => $text_length
-            )
+            'remediationSuggestions' => $remediationSuggestions
         );
     }
 
