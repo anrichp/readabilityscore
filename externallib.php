@@ -58,6 +58,9 @@ class block_readabilityscore_external extends external_api
         $params = self::validate_parameters(self::process_text_parameters(), 
                                             array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
 
+        $start_time = microtime(true);
+        $start_memory = memory_get_usage();
+
         $debug_info = debug_readability_score($params['selectedtext']);
         $score = $debug_info['gunning_fog_index'];
 
@@ -65,10 +68,24 @@ class block_readabilityscore_external extends external_api
 
         $remediationSuggestions = self::generate_remediation_suggestions($score, $debug_info);
 
+        $end_time = microtime(true);
+        $end_memory = memory_get_usage();
+
+        $execution_time = $end_time - $start_time;
+        $memory_used = $end_memory - $start_memory;
+        $text_length = strlen($params['selectedtext']);
+
+        self::log_performance_data($execution_time, $memory_used, $text_length);
+
         return array(
             'readabilityscore' => $score,
             'debug_info' => json_encode($debug_info),
-            'remediationSuggestions' => $remediationSuggestions
+            'remediationSuggestions' => $remediationSuggestions,
+            'performance' => array(
+                'execution_time' => $execution_time,
+                'memory_used' => $memory_used,
+                'text_length' => $text_length
+            )
         );
     }
 
