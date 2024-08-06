@@ -28,10 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'block_readabilityscore';
 
 // The release version of the plugin.
-$plugin->release = '0.2.5';
+$plugin->release = '0.2.6';
 
 // The version number of the plugin. This should be increased on each change.
-$plugin->version = 2024070802;
+$plugin->version = 2024080601;
 
 // The minimum Moodle version required for this plugin to function.
 $plugin->requires = 2022112800;
