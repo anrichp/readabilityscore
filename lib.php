@@ -182,13 +182,12 @@ function store_readability_score($userid, $score, $selectedtext, $pageurl) {
 
 function log_performance_data($execution_time, $memory_used, $text_length) {
     global $DB;
-
+    
     $record = new stdClass();
     $record->execution_time = $execution_time;
     $record->memory_used = $memory_used;
     $record->text_length = $text_length;
     $record->timestamp = time();
 
-    //Insert the record into the performance logging table
-    $DB->insert_record('block_readabilityscore_performace', $record);
+    $DB->insert_record('block_readabilityscore_performance', $record);
 }
