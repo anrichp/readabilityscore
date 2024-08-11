@@ -219,7 +219,7 @@ We welcome contributions to the Readability Score block. Please submit pull requ
 
 ## Licence
 
-This plugin is licensed under the GNU GPL v3 or later. See the LICENCE file for details.
+This plugin is licensed under the GNU GPL v3 or later.
 
 ## Support
 
