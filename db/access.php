@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array (
     'block/readabilityscore:addinstance' => array(
         'riskbitmask' => RISK_XSS,  // This capability carries a risk of XSS (Cross-site scripting)
-        'captype' => 'write',  // This is a write-type capability
+        'captype' => 'write',  // This capability allows the plugin to write to the DB
         'contextlevel' => CONTEXT_BLOCK,  // This capability applies at the block context level
         'archetypes' => array (
             'editingteacher' => CAP_ALLOW,  // Editing teachers are allowed to add this block

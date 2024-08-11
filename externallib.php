@@ -58,19 +58,23 @@ class block_readabilityscore_external extends external_api
         $params = self::validate_parameters(self::process_text_parameters(), 
                                             array('selectedtext' => $selectedtext, 'pageurl' => $pageurl));
 
+        // Use built in php functions to measure execution time and memory usage
         $start_time = microtime(true);
         $start_memory = memory_get_usage();
 
         $debug_info = debug_readability_score($params['selectedtext']);
         $score = $debug_info['gunning_fog_index'];
 
+        // Store readability score in the database
         store_readability_score($USER->id, $score, $params['selectedtext'], $params['pageurl']);
 
         $remediationSuggestions = self::generate_remediation_suggestions($score, $debug_info);
 
+        // Call microtime and mermory management to get execution times after readability score calculation
         $end_time = microtime(true);
         $end_memory = memory_get_usage();
 
+        // Calculate execution performance
         $execution_time = $end_time - $start_time;
         $memory_used = $end_memory - $start_memory;
         $text_length = strlen($params['selectedtext']);
@@ -78,6 +82,7 @@ class block_readabilityscore_external extends external_api
         // Log the performance data
         log_performance_data($execution_time, $memory_used, $text_length);
 
+        // Return readability score and remediation suggestions which is then displayed in the DOM
         return array(
             'readabilityscore' => $score,
             'debug_info' => json_encode($debug_info),

@@ -180,6 +180,13 @@ function store_readability_score($userid, $score, $selectedtext, $pageurl) {
     $DB->insert_record('readability_scores', $record);
 }
 
+/**
+ * Store performance data in the database.
+ *
+ * @param int $execution_time The duration of the readability calculation
+ * @param int $memory_used The memory usage of the readability calculation
+ * @param int $text_length The length of the selected text in characters
+ */
 function log_performance_data($execution_time, $memory_used, $text_length) {
     global $DB;
     

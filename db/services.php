@@ -41,7 +41,13 @@ $functions = array(
     ),
 );
 
-// Definition of services
+/**
+ * Definition of services
+ * 
+ * This array defines whether the plugin should have an associated service in the Moodle web services page.
+ * This service allows a token to be assigned to the service and facilitaties API calls to the external API
+ * defined in this protject.
+ */
 $services = array(
     'readabilityscore_service' => array(
         'functions' => array('block_readabilityscore_process_text'),  // List of functions this service can call
