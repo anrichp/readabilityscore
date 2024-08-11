@@ -1,8 +1,48 @@
 # Readability Score Moodle Block
 
+- [Readability Score Moodle Block](#readability-score-moodle-block)
+  - [Overview](#overview)
+  - [Research Objectives](#research-objectives)
+  - [Key Findings](#key-findings)
+  - [Features](#features)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Adding the block to a course](#adding-the-block-to-a-course)
+    - [Analysing text](#analysing-text)
+    - [Viewing the dashboard](#viewing-the-dashboard)
+  - [Interpreting the Gunning Fog Index](#interpreting-the-gunning-fog-index)
+  - [Architecture](#architecture)
+    - [Class Diagram](#class-diagram)
+    - [Sequence Diagram](#sequence-diagram)
+    - [Component Diagram](#component-diagram)
+  - [Research Methodology](#research-methodology)
+  - [Limitations and Future Work](#limitations-and-future-work)
+  - [Contributing](#contributing)
+  - [Licence](#licence)
+  - [Support](#support)
+  - [Credits](#credits)
+
+
 ## Overview
 
-The Readability Score block is a Moodle plugin that allows users to analyse the readability of text content within Moodle. It uses the Gunning Fog Index to calculate readability scores and provides suggestions for improving the text's clarity.
+The Readability Score block is a Moodle plugin developed as part of a Master's dissertation in Computer Science. It allows users to analyse the readability of text content within Moodle courses using the Gunning Fog Index. The plugin aims to address limitations in existing Web Accessibility Evaluation Tools (WAETs), particularly in their coverage of WCAG 2.1 success criterion 3.1.5, which relates to reading level.
+
+## Research Objectives
+
+The primary objectives of this research project were:
+
+1. Analyse the effectiveness of various readability scoring algorithms.
+2. Design and develop a Moodle plugin that implements the most effective readability scoring algorithm.
+3. Evaluate the plugin's effectiveness in identifying complex text and its ability to provide suggestions for improvement.
+
+## Key Findings
+
+- The Gunning Fog Index demonstrated the strongest positive correlation (0.64) with human-generated text readability levels among the evaluated algorithms.
+- The plugin achieved an overall accuracy of 50.97% in classifying text difficulty levels when compared to the OneStopEnglish Corpus.
+- Performance varied across difficulty levels: Intermediate (56.61%), Advanced (55.56%), and Elementary (40.74%).
+- A strong correlation (0.90) was observed between the plugin's Gunning Fog Index scores and the corpus difficulty levels.
+- The plugin demonstrated efficient performance with an average execution time of 0.0143 seconds and low memory utilisation.
 
 ## Features
 
@@ -77,28 +117,28 @@ This class diagram shows the main components of the Readability Score block and 
 
 ```mermaid
 classDiagram
-    class block_readabilityscore {
-        +init()
-        +get_content()
-        +applicable_formats()
-        +specialisation()
-    }
-    class TextStatistics {
-        +word_count(text)
-        +sentence_count(text)
-        +complex_word_count(text)
-        +gunning_fog(text)
-        -is_complex_word(word)
-        -syllable_count(word)
-    }
-    class block_readabilityscore_external {
-        +process_text_parameters()
-        +process_text(selectedtext, pageurl)
-        +process_text_returns()
-        -generate_remediation_suggestions(score, debug_info)
-    }
-    block_readabilityscore ..> TextStatistics : uses
-    block_readabilityscore_external ..> TextStatistics : uses
+ class block_readabilityscore {
+     +init()
+     +get_content()
+     +applicable_formats()
+     +specialisation()
+ }
+ class TextStatistics {
+     +word_count(text)
+     +sentence_count(text)
+     +complex_word_count(text)
+     +gunning_fog(text)
+     -is_complex_word(word)
+     -syllable_count(word)
+ }
+ class block_readabilityscore_external {
+     +process_text_parameters()
+     +process_text(selectedtext, pageurl)
+     +process_text_returns()
+     -generate_remediation_suggestions(score, debug_info)
+ }
+ block_readabilityscore ..> TextStatistics : uses
+ block_readabilityscore_external ..> TextStatistics : uses
 ```
 
 ### Sequence Diagram
@@ -156,6 +196,23 @@ These diagrams provide a visual representation of the plugin's architecture:
 2. The **Sequence Diagram** illustrates the process flow when a user analyses text.
 3. The **Component Diagram** provides a high-level view of the plugin's components and their interactions with Moodle core.
 
+## Research Methodology
+This project employed the Design Science Research Methodology (DSRM) framework, consisting of six phases:
+
+1. Problem Identification and Motivation
+2. Definition of Objectives for a Solution
+3. Design and Development
+4. Demonstration
+5. Evaluation
+6. Communication
+
+The evaluation phase utilised the OneStopEnglish Corpus as a benchmark for assessing the plugin's accuracy in classifying text difficulty levels.
+
+## Limitations and Future Work
+- The evaluation relied solely on the OneStopEnglish Corpus, which may not represent the full diversity of educational texts.
+- Classification thresholds for the Gunning Fog Index require further refinement.
+- Future work could explore integrating multiple readability metrics and incorporating machine learning techniques for improved accuracy.
+
 ## Contributing
 
 We welcome contributions to the Readability Score block. Please submit pull requests to our GitHub repository at https://github.com/anrichp/moodle-block_readabilityscore.
@@ -171,7 +228,3 @@ For support, please open an issue in our GitHub repository
 ## Credits
 
 Developed by Anrich Potgieter.
-
----
-
-We hope this Readability Score block enhances the content creation experience in your Moodle courses!
